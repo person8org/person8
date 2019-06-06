@@ -3,7 +3,7 @@
    [taoensso.timbre :as timbre]
    ["@material-ui/core" :as mui]
    ["@material-ui/icons" :as ic]
-   ["@material-ui/icons/AssignmentReturned" :default AppIcon]
+   ["@material-ui/icons/Menu" :default AppIcon]
    ["@material-ui/core/styles"
     :refer [makeStyles]]
    [re-frame.core :as rf]
@@ -54,16 +54,17 @@
 
 
 (def signed-in-status (rf/subscribe [:signed-in]))
+(def product (rf/subscribe [:product]))
 
 
 (defn header []
   [:div {:style {:flex-grow 1}}
    [:> mui/AppBar {:position "static"}
     [:> mui/Toolbar {}
-     [:> mui/Avatar
+     [:> mui/Icon
       {:style {:margin-right "1em"}}
-      [:> AppIcon {:color :secondary}]]
+      [:> AppIcon {:color "inherit"}]]
      [:> mui/Typography {:variant "h6"
                          :style {:flex 1}}
-      "ClipBox"]
+      (get @product :name "App")]
      [user-status-area {:signed-in-status signed-in-status}]]]])

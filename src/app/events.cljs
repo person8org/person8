@@ -3,7 +3,8 @@
    [taoensso.timbre :as timbre]
    ["blockstack" :as blockstack  ;; temporary
     :refer [UserSession]]
-   [app.state :refer [app-state]]
+   [app.state :as state
+    :refer [app-state]]
    [re-frame.core :as rf]
    [mount.core :refer [defstate]]))
 
@@ -181,12 +182,14 @@
  (fn [db [_ query]]
    (get db :drag)))
 
+(rf/reg-sub
+ :product
+ (fn [db [_ query]]
+   (get db :product)))
+
 (def initial-db
-  {:debug false
-   :board [{:id "0"
-            :title "Initial Clip"
-            :type "text/plain"
-            :data (str "Paste images, text and other content to share across devices.\n"
-                       "Select clip to copy the content.")}]})
+  {:debug true
+   :product {:name "Person8"}
+   :board state/profile-fields})
 
 (rf/dispatch [:initialize initial-db])

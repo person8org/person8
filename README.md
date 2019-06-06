@@ -1,6 +1,4 @@
-# ClipBox
-
-[![Netlify Status](https://api.netlify.com/api/v1/badges/58ad42b4-e36f-4be5-8693-98b01bafa70d/deploy-status)](https://app.netlify.com/sites/clipbox/deploys)
+# Person8
 
 ## Based on shadow-cljs, proto-repl, reagent template
 

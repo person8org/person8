@@ -1,9 +1,12 @@
 (ns app.view.board
   (:require
+    [taoensso.timbre :as timbre]
     ["@material-ui/core" :as mui]
     ["@material-ui/icons" :as ic]
     ["@material-ui/icons/FileCopy" :default CopyIcon]
-    [re-frame.core :as rf]))
+    [re-frame.core :as rf]
+    [app.view.pane :as pane
+     :refer []]))
 
 (def test-url "https://images.pexels.com/photos/248797/pexels-photo-248797.jpeg")
 
@@ -54,7 +57,7 @@
    (for [{:keys [selected] :as item} items]
      [:> mui/ListItem
       {:selected (boolean selected)}
-      [item-card item]])))
+      [pane/profile-card item]])))
 
 (def drag-status (rf/subscribe [:drag]))
 
@@ -70,5 +73,6 @@
    children))
 
 (defn board-pane [items]
+  (timbre/debug "Board Pane:" items)
   [drop-zone
     [board-listing items]])
