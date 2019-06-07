@@ -2,7 +2,7 @@
   :description "A leiningen project to use proto repl with shadow-cljs."
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [org.clojure/core.async "0.4.490"]
-                 [thheller/shadow-cljs "2.8.37"]
+                 [thheller/shadow-cljs "2.8.39"]
                  ; [binaryage/devtools "0.9.10"]
                  [proto-repl-charts "0.3.1"]
                  [proto-repl "0.3.1"]
