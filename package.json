@@ -1,14 +1,14 @@
 {
-  "name": "shadow-reagent",
+  "name": "person8",
   "version": "0.0.1",
-  "description": "Template for shadow-cljs and reagent projects",
+  "description": "Based on template for shadow-cljs and reagent projects",
   "repository": {
     "type": "git",
     "url": "https://github.com/jacekschae/shadow-reagent"
   },
   "author": {
-    "name": "Jacek Schae",
-    "email": "jacek.schae@gmail.com"
+    "name": "Terje Norderhaug",
+    "email": "terje@in-progress.com"
   },
   "license": "EPL-2.0",
   "scripts": {
