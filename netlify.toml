@@ -1,0 +1,4 @@
+[build]
+  command = "shadow-cljs release --verbose app"
+  functions = "functions"
+  publish = "public"
