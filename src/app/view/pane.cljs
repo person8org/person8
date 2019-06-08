@@ -58,7 +58,9 @@
     :raised
     [ui/raised-button
      {:on-click action}
-     "Share" [:> SmsIcon]]))
+     [:span {:style "margin-right: 1em"}
+      "Share"]
+     [:> SmsIcon]]))
 
 (defn share-dialog [{:keys [open content label send-action cancel-action]}]
   (let [targets [{:id "1" :label "SF Social Services" :number "+415-111-1111"}
