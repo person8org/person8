@@ -14,7 +14,6 @@ class SignedIn extends Component {
     this.state = {
       me: {},
       savingMe: false,
-      savingKingdown: false,
       redirectToMe: false
     }
 
@@ -62,89 +61,8 @@ class SignedIn extends Component {
     const me = this.state.me
     const redirectToMe = this.state.redirectToMe
 
-    // Terje's intercept:
     return (<div style={{display: 'none'}}>Signed in!</div>)
 
-    if(redirectToMe) {
-      // User hasn't configured her animal
-      if(window.location.pathname !== '/me') {
-        return (
-          <Redirect to="/me" />
-        )
-      }
-    }
-
-    if(window.location.pathname === '/') {
-      return (
-        <Redirect to={`/kingdom/${username}`} />
-      )
-    }
-
-    return (
-      <div className="SignedIn">
-        <NavBar username={username} signOut={this.signOut}/>
-        <Switch>
-              <Route
-                path='/animals'
-                render={
-                  routeProps => <OptionsList
-                  type="animals"
-                  {...routeProps} />
-                }
-              />
-              <Route
-                path='/territories'
-                render={
-                  routeProps => <OptionsList
-                  type="territories"
-                  {...routeProps} />
-                }
-              />
-              <Route
-                path='/others'
-                render={
-                  routeProps => <OtherKingdoms
-                  type="territories"
-                  {...routeProps} />
-                }
-              />
-              <Route
-                path='/me'
-                render={
-                  routeProps => <EditMe
-                  me={me}
-                  saveMe={this.saveMe}
-                  username={username}
-                  {...routeProps} />
-                }
-              />
-              <Route
-                path={`/kingdom/${username}`}
-                render={
-                  routeProps => <Kingdom
-                  myKingdom={true}
-                  protocol={window.location.protocol}
-                  ruler={username}
-                  currentUsername={username}
-                  realm={window.location.origin.split('//')[1]}
-                  {...routeProps} />
-                }
-              />
-              <Route
-                path='/kingdom/:protocol/:realm/:ruler'
-                render={
-                  routeProps => <Kingdom
-                  myKingdom={false}
-                  protocol={routeProps.match.params.protocol}
-                  realm={routeProps.match.params.realm}
-                  ruler={routeProps.match.params.ruler}
-                  currentUsername={username}
-                  {...routeProps} />
-                }
-              />
-        </Switch>
-      </div>
-    );
   }
 }
 

@@ -18,6 +18,7 @@
   (timbre/debug "Dispatch:" name event)
   (case name
     "UserSession" (rf/dispatch [:user-session event])
+    "UserData" (rf/dispatch [:user-data event])
     (timbre/warn "Unknown dispatch:" name)))
 
 (defn auth [& content]
