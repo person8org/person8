@@ -16,11 +16,17 @@
 (defn card-media [& props]
   (into [:> mui/CardMedia] props))
 
+(defn card-action-area [& props]
+  (into [:> mui/CardActionArea] props))
+
 (defn card-actions [& props]
   (into [:> mui/CardActions] props))
 
 (defn card-text [& props]
   (into [:> mui/CardText] props))
+
+(defn card-content [& props]
+  (into [:> mui/CardContent] props))
 
 (defn list [& props]
   (into [:> mui/List] props))

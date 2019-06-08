@@ -70,10 +70,18 @@
 
 (rf/reg-sub
  :user-data
- (fn [{:keys [user-session] :as db} query]
-   (if-let [data (and user-session
+ (fn [{:keys [user-session user-data] :as db} query]
+   (or
+    user-data
+    ;; ### hmmm
+    (if-let [data (and user-session
                       (.loadUserData user-session))]
-     (clj->js data))))
+      (clj->js data)))))
+
+(rf/reg-event-db
+ :user-data
+ (fn [db [_ value]]
+   (assoc db :user-data value)))
 
 (rf/reg-sub
  :signed-in
@@ -110,8 +118,6 @@
  (fn [db query]
    (-> (get db :file)
        (get query))))
-
-
 
 (defn parse-json [s]
   (.parse js/JSON s))
@@ -165,6 +171,19 @@
            (fn [items]
              (map #(assoc % :selected (= % item))
                   items)))))
+
+(rf/reg-event-db
+ :replace-image
+ (fn [db [_ {:keys [id] :as item}
+            {:keys [url] :as file}]]
+   (timbre/debug "Should replace image:" item file)
+   (assoc db :board
+         (map
+           (fn [li]
+             (if (= id (:id li))
+               (assoc li :image url)
+               li))
+           (:board db)))))
 
 (rf/reg-event-db
  :paste

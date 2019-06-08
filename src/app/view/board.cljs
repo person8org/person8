@@ -4,52 +4,41 @@
     ["@material-ui/core" :as mui]
     ["@material-ui/icons" :as ic]
     ["@material-ui/icons/FileCopy" :default CopyIcon]
+    [cljs-drag-n-drop.core :as dnd]
     [re-frame.core :as rf]
+    [reagent.core :as reagent]
+    [app.drop
+     :refer [decode-file]]
     [app.view.pane :as pane
      :refer []]))
 
-(def test-url "https://images.pexels.com/photos/248797/pexels-photo-248797.jpeg")
-
 (def debug (rf/subscribe [:debug]))
 
-(defn card-file-area [{:keys [kind name id type data url] :as item}]
-  [:<>
-   [:> mui/CardHeader
-     {:title name
-      :subheader type
-      :avatar nil}]])
+(def drag-status (rf/subscribe [:drag]))
 
-(defn item-card [{:keys [kind id type data url] :as item}]
-  [:> mui/Card
-   {:on-click #(rf/dispatch [:select item])}
-   (if @debug
-     [:> mui/CardHeader
-      {:title (str (or id url "???"))
-       :subheader (str (or type "???"))}])
-   (cond
-
-     (= kind "file")
-     [card-file-area item]
-
-     (= type "text/plain")
-     [:> mui/CardContent
-       [:> mui/Typography {:component "p"} data]]
-
-     url
-     [:> mui/CardActionArea
-      [:> mui/CardMedia
-        {:title url
-         :style {:height "140"}
-         :component "img"
-         :image url}]
-      (if @debug
-        [:> mui/CardContent
-         [:> mui/Typography {:component "p"} "Image: " type]
-         [:> mui/Typography {:component "p"} url]])]
-
-     @debug
-     [:> mui/CardContent
-      (pr-str data)])])
+(defn drop-zone [{:keys [item]} & children]
+  ;; consider instead using https://www.npmjs.com/package/material-ui-dropzone
+  (let [unique-key (keyword (str "drop-zone-" (random-uuid)))]
+    (reagent/create-class
+     {:component-did-mount
+      (fn [comp]
+        (timbre/debug "Mount dropzone:" comp)
+        (let [node (reagent/dom-node comp)]
+          (dnd/subscribe!
+           node unique-key
+           {:drop (fn [e files]
+                    (timbre/debug "Drop:" files)
+                    (let [[file] (js->clj (js/Array.from files))]
+                      (rf/dispatch [:replace-image item (decode-file file)])))})))
+      :component-will-unmount
+      (fn [comp]
+        (timbre/debug "Unmount dropzone:" comp)
+        (let [node (reagent/dom-node comp)]
+          (dnd/unsubscribe! node unique-key)))
+      :reagent-render
+      (fn [{:keys [item]} & children]
+        ;; Bug: Not updating item if changed
+        (into [:<>] children))})))
 
 (defn board-listing [items]
   (into
@@ -57,22 +46,9 @@
    (for [{:keys [selected] :as item} items]
      [:> mui/ListItem
       {:selected (boolean selected)}
-      [pane/profile-card item]])))
-
-(def drag-status (rf/subscribe [:drag]))
-
-(defn drop-zone [& children]
-  ;; consider instead using https://www.npmjs.com/package/material-ui-dropzone
-  (into
-   [:div
-    {:style {:min-height "100vh"
-             :width "100%"
-             :border (if (= @drag-status :start)
-                       "thick solid yellow"
-                       "thin solid none")}}]
-   children))
+      [drop-zone {:item item}
+        [pane/profile-card item]]])))
 
 (defn board-pane [items]
   (timbre/debug "Board Pane:" items)
-  [drop-zone
-    [board-listing items]])
+  [board-listing items])

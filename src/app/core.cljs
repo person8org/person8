@@ -5,6 +5,7 @@
    ["../gen/App" :as App]
    [app.view.core :as view]
    [app.datatransfer]
+   [app.drop]
    [app.events]))
 
 (defn mount-root []

@@ -13,9 +13,11 @@
    [taoensso.timbre :as timbre]
    [re-frame.core :as rf]
    [mount.core :refer [defstate]]
-   [app.clipboard :as clipboard
-    :refer [modern-clipboard]]
-   [cljs-drag-n-drop.core :as dnd]))
+   [app.lib.url
+    :refer [as-url]]
+   [app.lib.clipboard :as clipboard
+    :refer [modern-clipboard]]))
+
 
 "Data transfer through clipboard (copy/cut/paste) and filesystem drag/drop"
 
@@ -40,12 +42,6 @@
   (rf/dispatch [:paste (assoc payload
                               :id (random-uuid))]))
 
-(defn as-url [object]
-  {:pre [(some? object)]
-   :post [string?]}
-  (if (goog.fs.url.browserSupportsObjectUrls)
-    (goog.fs.url.createObjectUrl object)
-    (timbre/error "Browser doesn't support object URLs")))
 
 (defn get-as-string [item]
   {:pre [(some? item)]}
@@ -164,47 +160,3 @@
                               copy-handler)
     :stop (.removeEventListener js/document goog.events.EventType.COPY
                                copy-handler))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn drop-handler [e files]
-  (timbre/debug "Drop Files:" e files)
-  (doseq [file files]
-    (let [url (as-url file)
-          item-type "image/tiff"]
-      (dispatch-paste {:kind "file"
-                       :name (.-name file)
-                       :type (.-type file)
-                       :size (.-size file)
-                       :modified (.-lastModified file)
-                       :data file
-                       :url  url}))))
-
-
-(defn enable-drop []
-  (dnd/subscribe! js/document.documentElement :unique-key
-                  {:start (fn [e]
-                            (println "d1 start")
-                            (rf/dispatch [:drag [:start e]]))
-                   :enter (fn [e]
-                            (println "d1 enter")
-                            (rf/dispatch [:drag [:enter e]]))
-                   :drop  (fn [e files]
-                            (println "d1 drop")
-                            (let [files (js->clj (js/Array.from files))]
-                              (drop-handler e files)
-                              (rf/dispatch [:drag [:drop e files]])))
-                   :leave (fn [e]
-                            (println "d1 leave")
-                            (rf/dispatch [:drag [:leave e]]))
-                   :end   (fn [e]
-                            (println "d1 end")
-                            (rf/dispatch [:drag [:end e]]))}))
-
-
-(defn disable-drop []
-  (dnd/unsubscribe! js/document.documentElement :unique-key))
-
-(defstate drop-target
-  :start (enable-drop)
-  :stop (disable-drop))

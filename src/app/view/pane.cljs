@@ -70,20 +70,22 @@
     (fn [{:keys [open content label send-action cancel-action]}]
       [ui/dialog {:open open}
        [:> mui/DialogTitle (str "Share " label)]
-       (into
-        [ui/select-field {:floating-label-text "With:"
-                          :on-change on-change-selected
-                          :value @selected}]
-        (for [{:keys [id label]} targets]
-          [ui/menu-item {} label]))
+       [:> mui/FormControl
+        [:> mui/InputLabel "With:"]
+        (into
+         [ui/select-field {:on-change on-change-selected
+                           :value @selected}]
+         (for [{:keys [id label]} targets]
+           [ui/menu-item {} label]))]
        [:> mui/DialogActions
-                [ui/flat-button    {:label "Cancel"
-                                    :primary false
-                                    :on-click cancel-action}]
-                [ui/flat-button    {:label "Send SMS"
-                                    :primary true
+                [ui/flat-button    {:variant "outlined"
+                                    :color "secondary"
+                                    :on-click cancel-action}
+                  "Cancel"]
+                [ui/flat-button    {:color "primary"
                                     :on-click #(send-action
-                                                {:target (find-target)})}]]])))
+                                                {:target (find-target)})}
+                  "Send SMS"]]])))
 
 
 (defn now-timestamp []
@@ -142,7 +144,7 @@
        :title "Your Name"
        :subtitle "What you prefer to be called"}]
      [ui/card-text (:firstName profile) " " (:lastName profile)]
-     [ui/card-actions #_{:style {:position "relative" :right 0}}
+     [ui/card-actions
       (if share
         [:div {:style {:display "flex"
                        :justify-content "flex-end"
@@ -196,15 +198,18 @@
          :avatar (-> [:> mui/Avatar [:> DocIcon]]
                      reagent/as-element)}]]
       [:> mui/ExpansionPanelDetails
-        (if image
-          [ui/card-media {:image image}
-            [:img {:src image}]])
 
-        [ui/card-actions #_{:style {:position "relative" :right 0}}
+        [ui/card-action-area
+         (if image
+           [ui/card-media {:style {:height "auto"}
+                           :image image
+                           :component "img"}])]
+
+        [ui/card-actions
          (if (and share true)
-           [:div {:style {:display "flex"
-                          :justify-content "flex-end"
-                          :width "100%"
+           [:div {:style {;:display "flex"
+                          ;:justify-content "flex-end"
+                          ;:width "100%"
                           :padding 0}}
             [share-option {:id id :content content :label label :feedback feedback}]
             #_[notice feedback #(reset! feedback nil)]])

@@ -1,4 +1,4 @@
-(ns app.clipboard
+(ns app.lib.clipboard
   (:require-macros
    [cljs.core.async.macros
     :refer [go go-loop]])
