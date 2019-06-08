@@ -1,10 +1,10 @@
 {
-  "name": "person8",
+  "name": "Person8",
   "version": "0.0.1",
   "description": "Based on template for shadow-cljs and reagent projects",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jacekschae/shadow-reagent"
+    "url": "https://norderhaug@bitbucket.org/norderhaug/person8.git"
   },
   "author": {
     "name": "Terje Norderhaug",
@@ -12,7 +12,7 @@
   },
   "license": "EPL-2.0",
   "scripts": {
-    "gen": "./node_modules/.bin/babel /Users/terje/Desktop/HACKATHONS/BlockStack19/shadow-reagent/src/js --out-dir ./src/gen",
+    "gen": "./node_modules/.bin/babel ./src/js --out-dir ./src/gen",
     "start": "shadow-cljs server",
     "dev": "shadow-cljs watch app",
     "release": "shadow-cljs release app",
@@ -23,10 +23,10 @@
     "@material-ui/core": "3.8.1",
     "@material-ui/icons": "3.0.1",
     "blockstack": "19.2.1",
-    "create-react-class": "^15.6.3",
+    "create-react-class": "~15.6.3",
     "load-styles": "^2.0.0",
-    "react": "^16.5.2",
-    "react-dom": "^16.5.2",
+    "react": "~16.5.2",
+    "react-dom": "~16.5.2",
     "react-router-dom": "^4.3.1"
   },
   "devDependencies": {
