@@ -9,6 +9,7 @@
     [reagent.core :as reagent]
     [app.drop
      :refer [decode-file]]
+    [app.view.invoice :as invoice-view]
     [app.view.pane :as pane
      :refer []]))
 
@@ -40,14 +41,23 @@
         ;; Bug: Not updating item if changed
         (into [:<>] children))})))
 
+(defn pick-zone [{:keys [item] :as props} & children]
+  (let [on-click #(rf/dispatch [:select item])]
+    (into [:div (assoc props :on-click on-click)]
+          children)))
+
 (defn board-listing [items]
   (into
-   [:> mui/List]
+   [:> mui/List
+    [invoice-view/funding-request-card]]  
    (for [{:keys [selected] :as item} items]
      [:> mui/ListItem
       {:selected (boolean selected)}
-      [drop-zone {:item item}
-        [pane/profile-card item]]])))
+      [drop-zone {:item item
+                  :style {:width "100%"}}
+       [pick-zone {:item item
+                   :style {:width "100%"}}
+        [pane/profile-card item]]]])))
 
 (defn board-pane [items]
   (timbre/debug "Board Pane:" items)

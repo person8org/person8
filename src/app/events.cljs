@@ -58,10 +58,18 @@
   (rf/dispatch [:count dec])
   (swap! app-state update-in [:count] dec))
 
+(rf/reg-sub
+ :user-name
+ (fn [{:keys [user-data] :as db} query]
+   (if user-data
+     (.-username user-data))))
+
 (rf/reg-event-db
  :user-session
- (fn [db [_ value]]
-   (assoc db :user-session value)))
+ (fn [db [_ session]]
+   (assoc db :user-session session
+             :user-data (or (:user-data db)
+                            (.loadUserData session)))))
 
 (rf/reg-sub
  :user-session
@@ -172,23 +180,35 @@
              (map #(assoc % :selected (= % item))
                   items)))))
 
+(defn update-board [{:keys [board] :as db} id f & args]
+  "DB with the mathing board item updated by the function f"
+  (assoc db :board
+         (map
+          (fn [li]
+            (if (= id (:id li))
+              (do
+                (timbre/debug "Update selected:" li)
+                (apply f li args))
+              li))
+          board)))
+
 (rf/reg-event-db
  :replace-image
  (fn [db [_ {:keys [id] :as item}
             {:keys [url] :as file}]]
    (timbre/debug "Should replace image:" item file)
-   (assoc db :board
-         (map
-           (fn [li]
-             (if (= id (:id li))
-               (assoc li :image url)
-               li))
-           (:board db)))))
+   (update-board db id assoc :image url)))
 
 (rf/reg-event-db
  :paste
- (fn [{:as db} [_ {:as item}]]
-   (update db :board conj item)))
+ (fn [{:keys [board] :as db}
+      [_ {:keys [url] :as item}]]
+   (timbre/info "Paste:" item)
+   (let [[selected] (filter :selected board)]
+     (timbre/debug "Paste into:" selected)
+     (if selected
+       (update-board db (:id selected) assoc :image url)
+       (update db :board conj item)))))
 
 (rf/reg-event-db
  :drag
@@ -205,6 +225,18 @@
  :product
  (fn [db [_ query]]
    (get db :product)))
+
+(rf/reg-sub
+ :requesting-funds
+ (fn [db [_]]
+   (get db :requesting-funds)))
+
+(rf/reg-event-db
+ :request-funds
+ (fn [{:as db} [_]]
+   (timbre/debug "Request Funds")
+   (assoc db :requesting-funds true)))
+
 
 (def initial-db
   {:debug true

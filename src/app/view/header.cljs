@@ -1,6 +1,7 @@
 (ns app.view.header
   (:require
    [taoensso.timbre :as timbre]
+   [clojure.string :as string]
    ["@material-ui/core" :as mui]
    ["@material-ui/icons" :as ic]
    ["@material-ui/icons/Menu" :default AppIcon]
@@ -14,14 +15,17 @@
 
 (def debug (rf/subscribe [:debug]))
 
+(def user-name (rf/subscribe [:user-name]))
+
 (defn user-status-area [{:keys [signed-in-status]}]
   (let [state (reagent/atom {})
         open-menu #(swap! state assoc :anchor (.-currentTarget %))
         close-menu #(swap! state assoc :anchor nil)
         signout #(rf/dispatch [:sign-user-out])
-        signin #(rf/dispatch [:sign-user-in])]
+        signin #(rf/dispatch [:sign-user-in])
+        request-funds #(rf/dispatch [:request-funds])]
     (fn [{:keys [signed-in-status]}]
-      (if (not @signed-in-status)
+      (if (not signed-in-status)
         [:div
          [:> mui/Button  {:color "inherit"
                           :on-click signin}
@@ -32,7 +36,8 @@
                              :aria-haspopup true
                              :color "inherit"
                              :on-click open-menu}
-          [:> ic/AccountCircle]]
+          [:> ic/AccountCircle] " "
+          (string/replace @user-name ".id.blockstack" "")]
          [:> mui/Menu
           {:id "menu-appbar"
            :anchorEl (:anchor @state)
@@ -40,7 +45,8 @@
            :on-close close-menu}
           (for [{:keys [action label] :as item}
                 [{:label "Sign Out" :action signout}
-                 (if @debug {:label "-"})
+                 {:label "-"}
+                 {:label "Request Funds" :action request-funds}
                  (if @debug {:label "Inbox" :action  #(rf/dispatch [:pane nil])})
                  (if @debug {:label "Profile" :action #(rf/dispatch [:pane :profile])})
                  (if @debug {:label "State" :action  #(rf/dispatch [:pane :state])})]
@@ -67,4 +73,4 @@
      [:> mui/Typography {:variant "h6"
                          :style {:flex 1}}
       (get @product :name "App")]
-     [user-status-area {:signed-in-status signed-in-status}]]]])
+     [user-status-area {:signed-in-status @signed-in-status}]]]])

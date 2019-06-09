@@ -58,7 +58,7 @@
     :raised
     [ui/raised-button
      {:on-click action}
-     [:span {:style "margin-right: 1em"}
+     [:span {:style {:margin-right "1em"}}
       "Share"]
      [:> SmsIcon]]))
 
@@ -223,7 +223,6 @@
 
 (defmethod pane :default [{:keys [mobile profile] :as session}]
   [:div {:style {:padding-top "60px"}}
-   #_(if develop [lib/pp-table session][:div])
    (if (= (get-in @mobile [:user :status]) "SUCCESS")
      (into
       [:div [identity-card session]]
