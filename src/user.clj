@@ -14,6 +14,8 @@
   (if true
     (shadow/watch :app)
     (println "Activate hotloading with:\n (shadow/watch :app)"))
-  (println "Select a repl with:\n (shadow/nrepl-select :app)"))
+  (if true
+    (shadow/nrepl-select :app)
+    (println "Select a repl with:\n (shadow/nrepl-select :app)")))
 
 (println "Custom Proto REPL Leiningen project started")
