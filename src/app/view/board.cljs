@@ -49,7 +49,7 @@
 (defn board-listing [items]
   (into
    [:> mui/List
-    [invoice-view/funding-request-card]]  
+    [invoice-view/funding-request-card]]
    (for [{:keys [selected] :as item} items]
      [:> mui/ListItem
       {:selected (boolean selected)}

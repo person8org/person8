@@ -74,7 +74,7 @@
     (->> invoice
          (map (fn [[k v]] [:div (name k) ":" (deref v)]))
          (into [:div]))
-    :empty [:<>]))
+    :empty [:div]))
 
 (defn funding-request-card []
   (let [address (reagent/atom default-address)

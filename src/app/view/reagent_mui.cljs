@@ -7,6 +7,8 @@
 
 "Shim for reagent mui"
 
+(assert mui/Card)
+
 (defn card [& props]
   (into [:> mui/Card] props))
 
@@ -27,6 +29,9 @@
 
 (defn card-content [& props]
   (into [:> mui/CardContent] props))
+
+(defn expansion-panel-details [& props]
+  (into [:> mui/ExpansionPanelDetails] props))
 
 (defn list [& props]
   (into [:> mui/List] props))
