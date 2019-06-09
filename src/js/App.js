@@ -27,7 +27,6 @@ class App extends Component {
         if (this.props.dispatch) {
           this.props.dispatch("UserData", userData)
         }
-        //window.location = `/kingdom/${userData.username}`
       })
     }
   }

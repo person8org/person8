@@ -5,6 +5,27 @@ body {
 .form-signin {
   margin: auto;
   width: 50%;
-  border: 3px solid green;
+  /* border: 3px solid green; */
   padding: 10px;
+}
+
+.Landing {
+  background-color: gray;
+  color: white;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  padding: 2em;
+  /* margin: auto; */
+  margin: 0;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  font-size: larger;
+}
+
+.Landing .btn {
+  border: thin solid salmon;
+  border-radius: 0.5em;
+  padding: 0.3em;
+  color: white;
 }

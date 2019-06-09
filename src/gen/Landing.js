@@ -35,7 +35,7 @@ var styles = {
   Landing: "Landing__Landing___Ks3RI"
 };
 
-require('load-styles')("/*  imported from Landing.css  */\n\n.Landing__Landing___Ks3RI {\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-align: center;\n  align-items: center;\n  width: 100%;\n  max-width: 330px;\n  padding: 15px;\n  margin: auto;\n  padding-top: 40px;\n  padding-bottom: 40px;\n}\n");
+require('load-styles')("/*  imported from Landing.css  */\n\n.Landing__Landing___Ks3RI {\n  background-color: black;\n  color: white;\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-align: center;\n  align-items: center;\n  width: 100%;\n  max-width: 330px;\n  padding: 15px;\n  /* margin: auto; */\n  margin: 2em;\n  padding-top: 40px;\n  padding-bottom: 40px;\n  font-size: larger;\n}\n");
 
 var Landing =
 /*#__PURE__*/
@@ -68,11 +68,13 @@ function (_Component) {
       }, _react.default.createElement("h1", {
         className: "h1 mb-3 font-weight-normal"
       }), _react.default.createElement("div", {
+        className: "card"
+      }, _react.default.createElement("p", null, "A lifeline for the Digital Nomad."), _react.default.createElement("p", null, "Keep your essential documentation from an encrypted vault."), _react.default.createElement("p", null, "Request emergency funding through the Lightning network.")), _react.default.createElement("div", {
         className: "form-signin"
       }, _react.default.createElement("button", {
-        className: "btn btn-lg btn-primary btn-block",
+        className: "btn btn-lg btn-primary",
         onClick: this.signIn.bind(this)
-      }, "Sign in with Blockstack")));
+      }, "Sign in with Blockstack!!!")));
     }
   }]);
 

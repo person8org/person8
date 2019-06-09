@@ -1,5 +1,7 @@
 
 .Landing {
+  background-color: black;
+  color: white;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-align: center;
@@ -7,7 +9,9 @@
   width: 100%;
   max-width: 330px;
   padding: 15px;
-  margin: auto;
+  /* margin: auto; */
+  margin: 2em;
   padding-top: 40px;
   padding-bottom: 40px;
+  font-size: larger;
 }

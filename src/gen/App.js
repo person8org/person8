@@ -81,8 +81,7 @@ function (_Component) {
 
           if (_this2.props.dispatch) {
             _this2.props.dispatch("UserData", userData);
-          } //window.location = `/kingdom/${userData.username}`
-
+          }
         });
       }
     }

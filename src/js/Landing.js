@@ -16,17 +16,23 @@ class Landing extends Component {
   }
 
   render() {
-    return (
-      <div className="Landing">
-        <h1 className="h1 mb-3 font-weight-normal"></h1>
-        <div className="form-signin">
-          <button
-            className="btn btn-lg btn-primary btn-block"
-            onClick={this.signIn.bind(this)}>Sign in with Blockstack
-          </button>
+      return (
+        <div className="Landing">
+          <h1 className="h1 mb-3 font-weight-normal"></h1>
+          <div className="card">
+            <p>A lifeline for the Digital Nomad.</p>
+            <p>Keep your essential documentation from an encrypted vault.</p>
+            <p>Request emergency funding through the Lightning network.</p>
+          </div>
+          <div className="form-signin">
+            <button
+              className="btn btn-lg btn-primary"
+              onClick={this.signIn.bind(this)}>
+                Sign in with Blockstack
+            </button>
+          </div>
         </div>
-      </div>
-    );
+      );
   }
 }
 
