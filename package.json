@@ -23,6 +23,7 @@
     "@material-ui/core": "3.8.1",
     "@material-ui/icons": "3.0.1",
     "blockstack": "19.2.1",
+    "bolt11": "^1.2.5",
     "create-react-class": "~15.6.3",
     "load-styles": "^2.0.0",
     "material-ui-dropzone": "2.3.5",
