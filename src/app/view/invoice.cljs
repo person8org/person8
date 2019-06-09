@@ -108,5 +108,5 @@
              [share-view/share-option
               {:id "payment-request"
                :content content
-               :label "Send funding request"
+               :label "request for funds"
                :feedback feedback}]]]]])))))

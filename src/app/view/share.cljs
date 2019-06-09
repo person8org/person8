@@ -32,7 +32,7 @@
   [ui/snackbar {:open (if @message true false)
                 :message (or @message "Sent SMS with your name")
                 :auto-hide-duration 4000
-                :on-request-close on-request-close}])
+                :on-exiting on-request-close}])
 
 (defn share-button [action]
   (case :raised
@@ -50,34 +50,46 @@
 
 (defn share-dialog [{:keys [open content label send-action cancel-action]}]
   (let [targets [{:id "1" :label "SF Social Services" :number "+415-111-1111"}
-                 {:id "2" :label "SF Food Bank" :number "+415-222-2222"}]
-        selected (atom "1")
+                 {:id "2" :label "SF Food Bank" :number "+415-222-2222"}
+                 {:id "3" :label "My Emergency contact" :number "+415-975-1717"}]
+        selected (reagent/atom "2")
         find-target (fn [] (first (filter #(= @selected (:id %)) targets)))
-        on-change-selected (fn [event index value]
-                             (reset! selected value))]
-    (fn [{:keys [open content label send-action cancel-action]}]
+        on-change-selected (fn [event & [index value]]
+                             (timbre/debug "Selected")
+                             (let [val (.. event -target -value)]
+                               (timbre/debug "Selected:" val index value)
+                               (reset! selected val)))]
+    (fn [{:keys [open content label send-action cancel-action] :as config}]
+      (timbre/debug "Dialog:" config)
       [ui/dialog {:open open}
        [:> mui/DialogTitle (str "Share " label)]
-       [:> mui/FormControl
-        [:> mui/InputLabel "With:"]
-        (into
-         [ui/select-field {:on-change on-change-selected
-                           :value @selected}]
-         (for [{:keys [id label]} targets]
-           [ui/menu-item {} label]))]
+       [:> mui/DialogContent
+        [:> mui/FormControl
+         [:> mui/InputLabel {:htmlFor "recipient"}
+          "Recipient:"]
+         (into
+          [:> mui/Select
+           {:onChange on-change-selected
+            :style {:min-width "10em"}
+            :input-props {:name "recipient"
+                          :id "recipient"}
+            :value @selected}]
+          (for [{:keys [id label]} targets]
+            [ui/menu-item {:value id}
+             label]))]]
        [:> mui/DialogActions
-                [ui/flat-button    {:variant "outlined"
-                                    :color "secondary"
+                [ui/flat-button    {:color "secondary"
                                     :on-click cancel-action}
                   "Cancel"]
-                [ui/flat-button    {:color "primary"
+                [ui/flat-button    {:variant "outlined"
+                                    :color "primary"
                                     :on-click #(send-action
                                                 {:target (find-target)})}
                   "Send SMS"]]])))
 
 (defn share-option [{:keys [id content feedback label]}]
-  (let [opened (atom false)
-        feedback (atom nil)]
+  (let [opened (reagent/atom false)
+        feedback (reagent/atom nil)]
     (fn [{:keys [id content feedback label]}]
       (let [send-action (fn [{:keys [target]}]
                           (do (share-content
