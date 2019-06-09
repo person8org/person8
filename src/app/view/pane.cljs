@@ -60,7 +60,10 @@
                        :width "100%"
                        :padding 0}}
          [share-option
-          {:id "name" :content content :label "Send name" :feedback feedback}]])]]))
+          {:id "name"
+           :content content
+           :label "Send name"
+           :feedback feedback}]])]]))
 
 
 (defn events-list [{events :events}]
@@ -101,17 +104,20 @@
            [ui/card-media {:style {:height "auto"}
                            :image image
                            :component "img"}])]
-        #_
         [ui/card-actions
          (if (and share true)
            [:div {:style {;:display "flex"
                           ;:justify-content "flex-end"
                           ;:width "100%"
                           :padding 0}}
-            [share-option {:id id :content content :label label :feedback feedback}]
+            [share-option
+             {:id id
+              :content content
+              :label label
+              :feedback feedback}]
             #_[notice feedback #(reset! feedback nil)]])
          (if edit
-           [:span {:style {:width "1em"}} " "
+           [:span {:style {:width "1em"}}
             [edit-button]])
          (if (and events @expanded)
            [events-list {:events events}])]]]])))

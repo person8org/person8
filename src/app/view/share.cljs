@@ -43,7 +43,7 @@
     :raised
     [ui/raised-button
      {:on-click action}
-     [:span {:style {:margin-right "1em"}}
+     [:span {:style {:margin-right "0.5em"}}
       "Share"]
      [:> SmsIcon]]))
 
@@ -91,8 +91,10 @@
                                             :timestamp (now-timestamp)}]))
                            (reset! opened false)
                            (reset! feedback (str "Sent an SMS with your " label))))
-            open-action #(reset! opened true)
-            cancel-action #(reset! opened false)]
+            open-action #(do (timbre/debug "Open share dialog")
+                           (reset! opened true))
+            cancel-action #(do (timbre/debug "Close share dialog")
+                             (reset! opened false))]
         [:div
          [share-button open-action]
          [share-dialog {:label label

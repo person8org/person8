@@ -8,7 +8,8 @@
    ["bolt11" :as bolt11]
    [re-frame.core :as rf]
    [reagent.core :as reagent]
-   [app.view.reagent-mui :as ui]))
+   [app.view.reagent-mui :as ui]
+   [app.view.share :as share-view]))
 
 (def requesting-funds (rf/subscribe [:requesting-funds]))
 
@@ -80,20 +81,28 @@
   (let [address (reagent/atom default-address)
         amount (reagent/atom "")
         memo (reagent/atom "")
-        timestamp (reagent/atom (js/Date.now))]
+        timestamp (reagent/atom (js/Date.now))
+        feedback (reagent/atom "Sending funding request!")
+        encoded-invoice (reagent/atom invoice-template-encoded)]
     (fn []
-      (if @requesting-funds
-        [ui/card
-         [ui/card-header
-          {:title "Funding Request"
-           :subheader "Receive funds through the Lightning Network"
-           :avatar (-> [:> mui/Avatar [:> MoneyIcon]]
-                       reagent/as-element)}]
-         [ui/card-content
-          [:> mui/FormControl
-           [amount-field {:value amount}]
-           [memo-field {:value memo}]
-           [hash-field {:address  address
-                        :amount amount
-                        :memo memo
-                        :timestamp timestamp}]]]]))))
+      (let [content {:text (str @memo "\n" @encoded-invoice)}]                              
+        (if @requesting-funds
+          [ui/card
+           [ui/card-header
+            {:title "Funding Request"
+             :subheader "Receive funds through the Lightning Network"
+             :avatar (-> [:> mui/Avatar [:> MoneyIcon]]
+                         reagent/as-element)}]
+           [ui/card-content
+            [:> mui/FormControl
+             [amount-field {:value amount}]
+             [memo-field {:value memo}]
+             [hash-field {:address  address
+                          :amount amount
+                          :memo memo
+                          :timestamp timestamp}]]
+            [share-view/share-option
+             {:id "payment-request"
+              :content content
+              :label "Send funding request"
+              :feedback feedback}]]])))))
