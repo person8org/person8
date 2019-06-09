@@ -87,11 +87,14 @@
     (fn []
       (let [content {:text (str @memo "\n" @encoded-invoice)}]
         (if @requesting-funds
+         [ui/list-item
           [ui/card
            [ui/card-header
-            {:title "Funding Request"
+            {:title "Payment Request"
              :subheader "Receive funds through the Lightning Network"
-             :avatar (-> [:> mui/Avatar [:> MoneyIcon]]
+             :avatar (-> [:> mui/Avatar
+                          [:> MoneyIcon
+                            {:style {:color "yellow"}}]]
                          reagent/as-element)}]
            [ui/card-content
             [:> mui/FormControl
@@ -106,4 +109,4 @@
               {:id "payment-request"
                :content content
                :label "Send funding request"
-               :feedback feedback}]]]])))))
+               :feedback feedback}]]]]])))))

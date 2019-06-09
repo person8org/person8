@@ -233,9 +233,9 @@
 
 (rf/reg-event-db
  :request-funds
- (fn [{:as db} [_]]
+ (fn [{:as db} [_ status]]
    (timbre/debug "Request Funds")
-   (assoc db :requesting-funds true)))
+   (assoc db :requesting-funds (if (some? status) status true))))
 
 
 (def initial-db

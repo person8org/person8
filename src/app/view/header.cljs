@@ -5,6 +5,7 @@
    ["@material-ui/core" :as mui]
    ["@material-ui/icons" :as ic]
    ["@material-ui/icons/Menu" :default AppIcon]
+   ["@material-ui/icons/FlashOn" :default LightningIcon]
    ["@material-ui/core/styles"
     :refer [makeStyles]]
    [re-frame.core :as rf]
@@ -58,10 +59,18 @@
                            (close-menu))}
              label])]]))))
 
+(def requesting-funds (rf/subscribe [:requesting-funds]))
+
+(defn lightning-button [{:keys [active]}]
+  (let [action #(rf/dispatch [:request-funds active])]
+    [:> mui/IconButton {:color "inherit"
+                        :style {:color (if active "yellow" "inherit")}
+                        :on-click action}
+     [:> LightningIcon]]))
+
 
 (def signed-in-status (rf/subscribe [:signed-in]))
 (def product (rf/subscribe [:product]))
-
 
 (defn header []
   [:div {:style {:flex-grow 1}}
@@ -73,4 +82,5 @@
      [:> mui/Typography {:variant "h6"
                          :style {:flex 1}}
       (get @product :name "App")]
+     [lightning-button {:active (not @requesting-funds)}]
      [user-status-area {:signed-in-status @signed-in-status}]]]])
