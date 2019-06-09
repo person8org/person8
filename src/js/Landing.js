@@ -21,7 +21,7 @@ class Landing extends Component {
           <h1 className="h1 mb-3 font-weight-normal"></h1>
           <div className="card">
             <p>A lifeline for the Digital Nomad.</p>
-            <p>Keep your essential documentation from an encrypted vault.</p>
+            <p>Securely maintain your personal identity through Blockstack.</p>
             <p>Request emergency funding through the Lightning network.</p>
           </div>
           <div className="form-signin">
