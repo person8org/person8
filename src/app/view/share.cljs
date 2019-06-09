@@ -62,7 +62,7 @@
     (fn [{:keys [open content label send-action cancel-action] :as config}]
       (timbre/debug "Dialog:" config)
       [ui/dialog {:open open}
-       [:> mui/DialogTitle (str "Share " label)]
+       [:> mui/DialogTitle (str "Send " label)]
        [:> mui/DialogContent
         [:> mui/FormControl
          [:> mui/InputLabel {:htmlFor "recipient"}
