@@ -1,5 +1,7 @@
 # Person8
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/0ee6baf5-bfde-4f7a-ac0d-d4856b61677e/deploy-status)](https://app.netlify.com/sites/person8/deploys)
+
 ## Based on shadow-cljs, proto-repl, reagent template
 
 `shadow-cljs` is a build tool for ClojureScript.
