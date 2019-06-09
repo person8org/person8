@@ -29,18 +29,22 @@
 ;:primary-text-color (color :light-black)
 
 (timbre/debug "colors:" (js-keys colors/blueGrey))
+(timbre/debug "color:" (aget colors/blueGrey "900"))
 
 (defn header-theme []
   (createMuiTheme
-   (clj->js {:palette {:type "dark"
-                       :primary colors/blueGrey
-                       :primary-text-color colors/white
-                       :typography #js {:useNextVariants true}}})))
+   (clj->js
+    {:palette {:type "dark"
+               :primary colors/blueGrey
+               :primary-text-color colors/white
+               :typography {:useNextVariants true}}})))
 
 (defn custom-theme []
   (createMuiTheme
-   (clj->js {:palette {:type "light"
-                       :typography #js {:useNextVariants true}}})))
+   (clj->js
+    {:palette {:type "dark"
+               ; :background (aget colors/blueGrey "700")
+               :typography #js {:useNextVariants true}}})))
 
 (def pane (rf/subscribe [:pane]))
 
@@ -55,7 +59,8 @@
    [:> mui-ThemeProvider
     {:theme (custom-theme)}
     [auth
+     [:div {:style {:background-color (aget colors/blueGrey "700")}}
        (case (or @pane :default)
          :profile [dev/user-profile-card {:user-data user-data}]
          :state [dev/state-inspector]
-         :default [board-pane (or @board-items)])]]])
+         :default [board-pane (or @board-items)])]]]])

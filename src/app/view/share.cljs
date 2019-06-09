@@ -42,9 +42,10 @@
       :icon [SmsIcon]}]
     :raised
     [ui/raised-button
-     {:on-click action}
+     {:on-click action
+      :variant "outlined"}
      [:span {:style {:margin-right "0.5em"}}
-      "Share"]
+      "Send SMS"]
      [:> SmsIcon]]))
 
 (defn share-dialog [{:keys [open content label send-action cancel-action]}]

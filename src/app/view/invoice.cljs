@@ -3,7 +3,7 @@
    [taoensso.timbre :as timbre]
    ["@material-ui/core" :as mui]
    ["@material-ui/icons" :as ic]
-   ["@material-ui/icons/Money" :default MoneyIcon]
+   ["@material-ui/icons/FlashOn" :default MoneyIcon]
    ["@material-ui/icons/EnhancedEncryption" :default EncryptIcon]
    ["bolt11" :as bolt11]
    [re-frame.core :as rf]
@@ -85,7 +85,7 @@
         feedback (reagent/atom "Sending funding request!")
         encoded-invoice (reagent/atom invoice-template-encoded)]
     (fn []
-      (let [content {:text (str @memo "\n" @encoded-invoice)}]                              
+      (let [content {:text (str @memo "\n" @encoded-invoice)}]
         (if @requesting-funds
           [ui/card
            [ui/card-header
@@ -101,8 +101,9 @@
                           :amount amount
                           :memo memo
                           :timestamp timestamp}]]
-            [share-view/share-option
-             {:id "payment-request"
-              :content content
-              :label "Send funding request"
-              :feedback feedback}]]])))))
+            [ui/card-actions
+             [share-view/share-option
+              {:id "payment-request"
+               :content content
+               :label "Send funding request"
+               :feedback feedback}]]]])))))

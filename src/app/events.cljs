@@ -239,7 +239,7 @@
 
 
 (def initial-db
-  {:debug true
+  {:debug false
    :product {:name "Person8"}
    :board state/profile-fields})
 
