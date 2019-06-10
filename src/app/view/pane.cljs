@@ -100,13 +100,13 @@
                         [:> DocIcon]
                         [:> NoDocIcon])]
                      reagent/as-element)}]]
-
       [ui/expansion-panel-details
         [ui/card-action-area
          (if image
            [ui/card-media {:style {:height "auto"}
                            :image image
                            :component "img"}])]
+       (if image
         [ui/card-actions
          (if (and share true)
            [:div {:style {;:display "flex"
@@ -123,7 +123,7 @@
            [:span {:style {:width "1em"}}
             [edit-button]])
          (if (and events @expanded)
-           [events-list {:events events}])]]]])))
+           [events-list {:events events}])])]]])))
 
 (defmethod pane :default [{:keys [mobile profile] :as session}]
   [:div {:style {:padding-top "60px"}}
