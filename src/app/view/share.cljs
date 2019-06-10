@@ -48,14 +48,33 @@
       "Send SMS"]
      [:> SmsIcon]]))
 
+(defn recipient-selector [{:keys [targets selected on-change]}]
+  (timbre/debug "Render: recipient selector")
+  [:> mui/FormControl
+   [:> mui/InputLabel {:htmlFor "recipient"}
+    "Recipient:"
+    (into
+     [:> mui/Select
+      {:onChange on-change
+       :on-change on-change
+       :style {:min-width "10em"}
+       :SelectDisplayProps {:on-change on-change}
+       :input-props {; :name "recipient"
+                     :id "recipient"}
+       :value @selected}]
+     (for [{:keys [id label]} targets]
+        [ui/menu-item {:value id}
+         label]))]])
+
+
 (defn share-dialog [{:keys [open content label send-action cancel-action]}]
   (let [targets [{:id "1" :label "SF Social Services" :number "+415-111-1111"}
                  {:id "2" :label "SF Food Bank" :number "+415-222-2222"}
                  {:id "3" :label "My Emergency contact" :number "+415-975-1717"}]
-        selected (reagent/atom "2")
+        selected (reagent/atom (:id (first targets)))
         find-target (fn [] (first (filter #(= @selected (:id %)) targets)))
         on-change-selected (fn [event & [index value]]
-                             (timbre/debug "Selected")
+                             (timbre/debug "Selected" event)
                              (let [val (.. event -target -value)]
                                (timbre/debug "Selected:" val index value)
                                (reset! selected val)))]
@@ -64,19 +83,9 @@
       [ui/dialog {:open open}
        [:> mui/DialogTitle (str "Send " label)]
        [:> mui/DialogContent
-        [:> mui/FormControl
-         [:> mui/InputLabel {:htmlFor "recipient"}
-          "Recipient:"]
-         (into
-          [:> mui/Select
-           {:onChange on-change-selected
-            :style {:min-width "10em"}
-            :input-props {:name "recipient"
-                          :id "recipient"}
-            :value @selected}]
-          (for [{:keys [id label]} targets]
-            [ui/menu-item {:value id}
-             label]))]]
+        [recipient-selector {:targets targets
+                             :on-change on-change-selected
+                             :selected selected}]]
        [:> mui/DialogActions
                 [ui/flat-button    {:color "secondary"
                                     :on-click cancel-action}

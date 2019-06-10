@@ -7,7 +7,7 @@
   [{:id "social-security-card"
     :label "Social Security Card"
     :description "Required for jobs, benefits and more"
-    :image "/media/social-security-card.jpg"
+    :image nil ; "/media/social-security-card.jpg"
     :expandable true
     :edit false
     :share true}

@@ -14,6 +14,7 @@
    ["@material-ui/icons/FileCopy" :default CopyIcon]
    ["@material-ui/icons/ExpandMore" :default ExpandMoreIcon]
    ["@material-ui/icons/Assignment" :default DocIcon]
+   ["@material-ui/icons/AssignmentLate" :default NoDocIcon]
    [app.view.reagent-mui :as ui]
    [goog.string :as gstring]
    [app.view.share :as share-view
@@ -87,15 +88,17 @@
       [:> mui/ExpansionPanelSummary
        {:expand-icon [:> ic/ExpandMoreIcon]}
        [ui/card-header
-        {:title (reagent/as-element [:span
-                                     label
-                                     (if events
-                                       [ui/badge
-                                        {:badge-content (str (count events))
-                                         :badge-style {:top "20px"}
-                                         :secondary true}])])
+        {:title (reagent/as-element
+                 [:span label
+                        (if events
+                          [ui/badge {:badge-content (str (count events))
+                                     :badge-style {:top "20px"}
+                                     :secondary true}])])
          :subheader description
-         :avatar (-> [:> mui/Avatar [:> DocIcon]]
+         :avatar (-> [:> mui/Avatar
+                      (if image
+                        [:> DocIcon]
+                        [:> NoDocIcon])]
                      reagent/as-element)}]]
 
       [ui/expansion-panel-details
