@@ -1,5 +1,6 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  background-color: gray;
 }
 
 #app {
@@ -11,4 +12,26 @@ body {
   width: 50%;
   /* border: 3px solid green; */
   padding: 10px;
+}
+
+/* Initial Loading */
+
+.loading.progress {
+  height: 56px;
+  opacity: 0.5;
+}
+
+
+/* Reloading after authentication */
+
+.reloading .landing {
+  display:  none;
+}
+
+.reload  {
+  display: none;
+}
+
+.reloading .reload {
+  display: block;
 }
