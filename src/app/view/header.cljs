@@ -3,9 +3,9 @@
    [taoensso.timbre :as timbre]
    [clojure.string :as string]
    ["@material-ui/core" :as mui]
-   ["@material-ui/icons" :as ic]
    ["@material-ui/icons/Menu" :default AppIcon]
    ["@material-ui/icons/FlashOn" :default LightningIcon]
+   ["@material-ui/icons/AccountCircle" :default AccountCircle]
    ["@material-ui/core/styles"
     :refer [makeStyles]]
    [re-frame.core :as rf]
@@ -30,14 +30,14 @@
         [:div
          [:> mui/Button  {:color "inherit"
                           :on-click signin}
-          [:> ic/AccountCircle]
+          [:> AccountCircle]
           "Sign In"]]
         [:div
          [:> mui/IconButton {:aria-owns "menu-appbar"
                              :aria-haspopup true
                              :color "inherit"
                              :on-click open-menu}
-          [:> ic/AccountCircle] " "
+          [:> AccountCircle] " "
           (string/replace @user-name ".id.blockstack" "")]
          [:> mui/Menu
           {:id "menu-appbar"

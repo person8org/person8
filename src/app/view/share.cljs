@@ -7,7 +7,6 @@
     :refer [<! chan close! alts! timeout put!]]
    [taoensso.timbre :as timbre]
    ["@material-ui/core" :as mui]
-   ["@material-ui/icons" :as ic]
    ["@material-ui/icons/Sms" :default SmsIcon]
    [app.view.reagent-mui :as ui]
    [re-frame.core :as rf]

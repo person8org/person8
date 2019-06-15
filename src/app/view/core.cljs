@@ -2,7 +2,6 @@
   (:require
    [taoensso.timbre :as timbre]
    ["@material-ui/core" :as mui]
-   ["@material-ui/icons" :as ic]
    ["@material-ui/core/styles/MuiThemeProvider" :default mui-ThemeProvider]
    ["@material-ui/core/styles" :refer [createMuiTheme]]
    ["@material-ui/core/colors" :as colors]

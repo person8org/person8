@@ -2,7 +2,6 @@
   (:require
    [taoensso.timbre :as timbre]
    ["@material-ui/core" :as mui]
-   ["@material-ui/icons" :as ic]
    ["@material-ui/icons/FlashOn" :default MoneyIcon]
    ["@material-ui/icons/EnhancedEncryption" :default EncryptIcon]
    ["bolt11" :as bolt11]

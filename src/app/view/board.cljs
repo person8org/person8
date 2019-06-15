@@ -2,7 +2,6 @@
   (:require
     [taoensso.timbre :as timbre]
     ["@material-ui/core" :as mui]
-    ["@material-ui/icons" :as ic]
     ["@material-ui/icons/FileCopy" :default CopyIcon]
     [cljs-drag-n-drop.core :as dnd]
     [re-frame.core :as rf]

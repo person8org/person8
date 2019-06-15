@@ -2,7 +2,6 @@
   (:require
    [taoensso.timbre :as timbre]
    ["@material-ui/core" :as mui]
-   ["@material-ui/icons" :as ic]
    [re-frame.core :as rf]
    [reagent.core :as reagent]
    [app.state :refer [app-state]]

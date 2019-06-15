@@ -2,7 +2,6 @@
   (:refer-clojure :exclude [list])
   (:require
    ["@material-ui/core" :as mui]
-   ["@material-ui/icons" :as ic]
    ["@material-ui/icons/FileCopy" :default CopyIcon]))
 
 "Shim for reagent mui"

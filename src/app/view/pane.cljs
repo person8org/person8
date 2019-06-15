@@ -15,6 +15,8 @@
    ["@material-ui/icons/ExpandMore" :default ExpandMoreIcon]
    ["@material-ui/icons/Assignment" :default DocIcon]
    ["@material-ui/icons/AssignmentLate" :default NoDocIcon]
+   ["@material-ui/icons/Edit" :default image-edit]
+   ["@material-ui/icons/Person" :default social-person]
    [app.view.reagent-mui :as ui]
    [goog.string :as gstring]
    [app.view.share :as share-view
@@ -40,7 +42,7 @@
   [ui/raised-button
    {:label ""
     :label-position "before"
-    :icon (ic/image-edit)}])
+    :icon (image-edit)}])
 
 
 (defn identity-card [{:keys [mobile] :as session}]
@@ -50,7 +52,7 @@
         feedback (atom nil)]
     [ui/card {:style {:margin-top "0.3em"}}
      [ui/card-header
-      {:avatar (ic/social-person)
+      {:avatar (social-person)
        :title "Your Name"
        :subtitle "What you prefer to be called"}]
      [ui/card-text (:firstName profile) " " (:lastName profile)]
@@ -86,7 +88,7 @@
     [ui/card {:style {:width "100%"}}
      [:> mui/ExpansionPanel
       [:> mui/ExpansionPanelSummary
-       {:expand-icon [:> ic/ExpandMoreIcon]}
+       {:expand-icon [:> ExpandMoreIcon]}
        [ui/card-header
         {:title (reagent/as-element
                  [:span label
