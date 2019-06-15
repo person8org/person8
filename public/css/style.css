@@ -2,32 +2,13 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
+#app {
+  min-height: 56px;
+}
+
 .form-signin {
   margin: auto;
   width: 50%;
   /* border: 3px solid green; */
   padding: 10px;
-}
-
-.Landing {
-  background-color: gray;
-  color: white;
-  align-items: center;
-  width: 100%;
-  height: 100vh;
-  padding: 2em;
-  /* margin: auto; */
-  margin: 0;
-  padding-top: 40px;
-  padding-bottom: 40px;
-  font-size: larger;
-}
-
-.Landing .btn {
-  background-color: salmon;
-  border-radius: 0.5em;
-  padding: 0.5em;
-  color: white;
-  font-weight: bold;
-  font-size: larger;
 }

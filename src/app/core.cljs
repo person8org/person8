@@ -6,6 +6,7 @@
    [app.lib.blockstack
     :refer [init-blockstack]]
    [app.datatransfer]
+   [app.routing]
    [app.drop]
    [app.events]))
 
