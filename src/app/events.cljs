@@ -155,15 +155,31 @@
 
 (rf/reg-event-fx
  :app/exit
- (fn [{:as db} [_ {:as item}]]
+ (fn [{:as fx} [_ {:as item}]]
    (timbre/info "Exit App")
    {:dispatch [:sign-user-out]}))
 
 (rf/reg-event-fx
  :app/signin
- (fn [{:as db} [_ {:as item}]]
+ (fn [{:as fx} [_ {:as item}]]
    (timbre/info "Signin")
    {:dispatch [:sign-user-in]}))
+
+(defn change-board-for-demo [items]
+  (map
+   (fn [item]
+     (if (= (:id item) "social-security-card")
+       (assoc item :icon nil)
+       item))
+   items))
+
+(rf/reg-event-fx
+ :app/demo
+ (fn [{:keys [db] :as fx} [_ {:as item}]]
+   (timbre/info "Demo")
+   {:db
+    (update-in db [:board] change-board-for-demo)}))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

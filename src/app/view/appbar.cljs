@@ -32,12 +32,13 @@
          [:> mui/Button  {:color "inherit"
                           :on-click signin}
           [:> AccountCircle]
-          "Sign In"]]
+          (if (some? signed-in-status)
+            "Sign In")]]
         [:div
-         [:> mui/IconButton {:aria-owns "menu-appbar"
-                             :aria-haspopup true
-                             :color "inherit"
-                             :on-click open-menu}
+         [:> mui/Button {:aria-owns "menu-appbar"
+                         :aria-haspopup true
+                         :color "inherit"
+                         :on-click open-menu}
           [:> AccountCircle] " "
           [short-username-field {:user-name @user-name}]]
          [:> mui/Menu
@@ -64,9 +65,9 @@
 
 (defn lightning-button [{:keys [active]}]
   (let [action #(rf/dispatch [:request-funds active])]
-    [:> mui/IconButton {:color "inherit"
-                        :style {:color (if active "yellow" "inherit")}
-                        :on-click action}
+    [:> mui/Button {:color "inherit"
+                    :style {:color (if active "yellow" "inherit")}
+                    :on-click action}
      [:> LightningIcon]]))
 
 

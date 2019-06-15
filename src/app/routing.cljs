@@ -11,7 +11,8 @@
   (router/router
     [["/signin" :app/signin]
      ["/exit" :app/exit]
-     ["/enter" :app/enter]]))
+     ["/enter" :app/enter]
+     ["/demo" :app/demo]]))
 
 
 (defn enable-routing []
