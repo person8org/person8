@@ -8,7 +8,7 @@
    [re-frame.core :as rf]
    [reagent.core :as reagent]
    [app.view.dev :as dev]
-   [app.view.header :as header
+   [app.view.appbar :as appbar
     :refer [header]]
    [app.view.board
     :refer [board-pane]]))

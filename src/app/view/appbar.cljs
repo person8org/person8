@@ -1,4 +1,4 @@
-(ns app.view.header
+(ns app.view.appbar
   (:require
    [taoensso.timbre :as timbre]
    [clojure.string :as string]
