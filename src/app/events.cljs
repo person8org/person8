@@ -1,11 +1,8 @@
 (ns app.events
   (:require
    [taoensso.timbre :as timbre]
-   ["blockstack" :as blockstack  ;; temporary
-    :refer [UserSession]]
-   [app.state :as state
-    :refer [app-state]]
    [re-frame.core :as rf]
+   [app.state :as state]
    [mount.core :refer [defstate]]
    [app.lib.blockstack]))
 
@@ -35,29 +32,6 @@
  :pane
  (fn [db query]
    (get db :pane)))
-
-(rf/reg-event-db
-   :count
-   (fn [db [_ f]]
-     (assoc db :count
-            (f (get db :count 0)))))
-
-(rf/reg-sub
- :count
- (fn [db query]
-   (get db :count 0)))
-
-(defn increment
-  [event]
-  (.preventDefault event)
-  (rf/dispatch [:count inc])
-  (swap! app-state update-in [:count] inc))
-
-(defn decrement
-  [event]
-  (.preventDefault event)
-  (rf/dispatch [:count dec])
-  (swap! app-state update-in [:count] dec))
 
 (rf/reg-sub
  :user-name

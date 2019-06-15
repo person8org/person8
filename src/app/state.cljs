@@ -1,13 +1,11 @@
 (ns app.state
   (:require [reagent.core :refer [atom]]))
 
-(defonce app-state (atom {:count 0}))
-
 (def profile-fields
   [{:id "social-security-card"
     :label "Social Security Card"
     :description "Required for jobs, benefits and more"
-    :image nil ; "/media/social-security-card.jpg"
+    :image "/media/social-security-card.jpg"
     :expandable true
     :edit false
     :share true}

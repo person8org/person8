@@ -2,7 +2,6 @@
   (:require
    [reagent.core :as r]
    [mount.core :as mount]
-   [app.lib.blockstack]
    [app.view.core :as view]
    [app.lib.blockstack
     :refer [init-blockstack]]

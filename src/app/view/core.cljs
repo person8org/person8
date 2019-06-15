@@ -7,8 +7,6 @@
    ["@material-ui/core/colors" :as colors]
    [re-frame.core :as rf]
    [reagent.core :as reagent]
-   [app.state :refer [app-state]]
-   [app.events :refer [increment decrement]]
    [app.view.dev :as dev]
    [app.view.header :as header
     :refer [header]]

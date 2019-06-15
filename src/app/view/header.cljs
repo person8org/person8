@@ -9,13 +9,15 @@
    ["@material-ui/core/styles"
     :refer [makeStyles]]
    [re-frame.core :as rf]
-   [reagent.core :as reagent]
-   [app.state :refer [app-state]]
-   [app.events :refer [increment decrement]]))
+   [reagent.core :as reagent]))
 
 (def debug (rf/subscribe [:debug]))
 
 (def user-name (rf/subscribe [:user-name]))
+
+(defn short-username-field [{:keys [user-name]}]
+  (if (string? user-name)
+    (string/replace user-name ".id.blockstack" "")))
 
 (defn user-status-area [{:keys [signed-in-status]}]
   (let [state (reagent/atom {})
@@ -37,7 +39,7 @@
                              :color "inherit"
                              :on-click open-menu}
           [:> AccountCircle] " "
-          (string/replace @user-name ".id.blockstack" "")]
+          [short-username-field {:user-name @user-name}]]
          [:> mui/Menu
           {:id "menu-appbar"
            :anchorEl (:anchor @state)
