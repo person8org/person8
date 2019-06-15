@@ -9,8 +9,6 @@
    [reagent.core :as reagent]
    [app.state :refer [app-state]]
    [app.events :refer [increment decrement]]
-   [app.view.authenticate
-    :refer [auth]]
    [app.view.dev :as dev]
    [app.view.header :as header
     :refer [header]]
@@ -49,6 +47,16 @@
 
 (def board-items (rf/subscribe [:board]))
 
+(def signed-in-status (rf/subscribe [:signed-in-status]))
+
+(defn page [{:keys [open]}]
+  [:div (if-not open {:style {:display "none"}})
+   [:div {:style {:background-color (aget colors/blueGrey "700")}}
+    (case (or @pane :default)
+      :profile [dev/user-profile-card {:user-data user-data}]
+      :state [dev/state-inspector]
+      :default [board-pane (or @board-items)])]])
+
 (defn app []
   [:<>
    [:> mui/CssBaseline]
@@ -57,9 +65,4 @@
     [header]]
    [:> mui-ThemeProvider
     {:theme (custom-theme)}
-    [auth
-     [:div {:style {:background-color (aget colors/blueGrey "700")}}
-       (case (or @pane :default)
-         :profile [dev/user-profile-card {:user-data user-data}]
-         :state [dev/state-inspector]
-         :default [board-pane (or @board-items)])]]]])
+    [page {:open (boolean @signed-in-status)}]]])

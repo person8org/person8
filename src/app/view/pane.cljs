@@ -10,7 +10,6 @@
    [re-frame.core :as rf]
    [taoensso.timbre :as timbre]
    ["@material-ui/core" :as mui]
-   ["@material-ui/icons" :as ic]
    ["@material-ui/icons/FileCopy" :default CopyIcon]
    ["@material-ui/icons/ExpandMore" :default ExpandMoreIcon]
    ["@material-ui/icons/Assignment" :default DocIcon]

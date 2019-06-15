@@ -11,8 +11,7 @@
    [re-frame.core :as rf]
    [reagent.core :as reagent]
    [app.state :refer [app-state]]
-   [app.events :refer [increment decrement]]
-   [app.view.authenticate]))
+   [app.events :refer [increment decrement]]))
 
 (def debug (rf/subscribe [:debug]))
 
@@ -22,8 +21,8 @@
   (let [state (reagent/atom {})
         open-menu #(swap! state assoc :anchor (.-currentTarget %))
         close-menu #(swap! state assoc :anchor nil)
-        signout #(rf/dispatch [:sign-user-out])
-        signin #(rf/dispatch [:sign-user-in])
+        signout #(rf/dispatch [:app/exit])
+        signin #(rf/dispatch [:app/signin])
         request-funds #(rf/dispatch [:request-funds])]
     (fn [{:keys [signed-in-status]}]
       (if (not signed-in-status)
@@ -69,7 +68,7 @@
      [:> LightningIcon]]))
 
 
-(def signed-in-status (rf/subscribe [:signed-in]))
+(def signed-in-status (rf/subscribe [:signed-in-status]))
 (def product (rf/subscribe [:product]))
 
 (defn header []

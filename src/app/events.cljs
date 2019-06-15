@@ -6,7 +6,8 @@
    [app.state :as state
     :refer [app-state]]
    [re-frame.core :as rf]
-   [mount.core :refer [defstate]]))
+   [mount.core :refer [defstate]]
+   [app.lib.blockstack]))
 
 (rf/reg-event-db
  :initialize
@@ -63,58 +64,6 @@
  (fn [{:keys [user-data] :as db} query]
    (if user-data
      (.-username user-data))))
-
-(rf/reg-event-db
- :user-session
- (fn [db [_ session]]
-   (assoc db :user-session session
-             :user-data (or (:user-data db)
-                            (.loadUserData session)))))
-
-(rf/reg-sub
- :user-session
- (fn [db query]
-   (get db :user-session)))
-
-(rf/reg-sub
- :user-data
- (fn [{:keys [user-session user-data] :as db} query]
-   (or
-    user-data
-    ;; ### hmmm
-    (if-let [data (and user-session
-                      (.loadUserData user-session))]
-      (clj->js data)))))
-
-(rf/reg-event-db
- :user-data
- (fn [db [_ value]]
-   (assoc db :user-data value)))
-
-(rf/reg-sub
- :signed-in
- (fn [db query]
-   ;; ## TODO: avoid repeated calls?
-   (if-let [session (get db :user-session)]
-     (.isUserSignedIn session))))
-
-(rf/reg-event-db
- :sign-user-out
- (fn [{:keys [user-session] :as db} [_ query]]
-   (timbre/debug "sign-user-out")
-   ;; ## TODO: eliminate side effect
-   (let [redirect-url nil]
-     (if user-session
-       (.signUserOut user-session redirect-url)
-       (blockstack/signUserOut redirect-url)))
-   db))
-
-(rf/reg-event-db
- :sign-user-in
- (fn [{:keys [user-session] :as db} [_ query]]
-   (if user-session
-     (.redirectToSignIn user-session)
-     (blockstack/redirectToSignIn))))
 
 (rf/reg-event-db
  :file
@@ -220,6 +169,29 @@
  :drag
  (fn [db [_ query]]
    (get db :drag)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; APP ROUTING EVENTS
+
+(rf/reg-event-fx
+ :app/enter
+ (fn [{:as db} [_ {:as item}]]
+   (timbre/info "Enter App")
+   {}))
+
+(rf/reg-event-fx
+ :app/exit
+ (fn [{:as db} [_ {:as item}]]
+   (timbre/info "Exit App")
+   {:dispatch [:sign-user-out]}))
+
+(rf/reg-event-fx
+ :app/signin
+ (fn [{:as db} [_ {:as item}]]
+   (timbre/info "Signin")
+   {:dispatch [:sign-user-in]}))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (rf/reg-sub
  :product

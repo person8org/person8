@@ -2,8 +2,10 @@
   (:require
    [reagent.core :as r]
    [mount.core :as mount]
-   ["../gen/App" :as App]
+   [app.lib.blockstack]
    [app.view.core :as view]
+   [app.lib.blockstack
+    :refer [init-blockstack]]
    [app.datatransfer]
    [app.drop]
    [app.events]))
@@ -19,7 +21,8 @@
 (defn ^:dev/after-load start
   []
   (mount-root)
-  (mount/start))
+  (mount/start)
+  (init-blockstack))
 
 (defn ^:export main
   []
