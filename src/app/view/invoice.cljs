@@ -7,7 +7,7 @@
    ["bolt11" :as bolt11]
    [re-frame.core :as rf]
    [reagent.core :as reagent]
-   [app.view.reagent-mui :as ui]
+   [app.lib.reagent-mui :as ui]
    [app.view.share :as share-view]))
 
 (def requesting-funds (rf/subscribe [:requesting-funds]))

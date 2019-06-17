@@ -16,7 +16,7 @@
    ["@material-ui/icons/AssignmentLate" :default NoDocIcon]
    ["@material-ui/icons/Edit" :default image-edit]
    ["@material-ui/icons/Person" :default social-person]
-   [app.view.reagent-mui :as ui]
+   [app.lib.reagent-mui :as ui]
    [goog.string :as gstring]
    [app.view.share :as share-view
     :refer [share-option]]))

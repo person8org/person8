@@ -1,4 +1,4 @@
-(ns app.view.reagent-mui
+(ns app.lib.reagent-mui
   (:refer-clojure :exclude [list])
   (:require
    ["@material-ui/core" :as mui]
