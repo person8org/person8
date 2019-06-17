@@ -9,21 +9,25 @@
 (rf/reg-event-fx
  :blockstack/init
  (fn [{{:keys [user-session] :as db} :db :as fx} [_]]
+   ; see https://docs.blockstack.org/develop/add_auth.html
    (if (some? user-session)
      (timbre/info "Blockstack user session already established")
      (let [user-session (new UserSession)]
        (timbre/info "Blockstack user session created")
-       ;; ## TODO: Factor as fx
+       (timbre/debug "User is signed in already:"
+                     (.isUserSignedIn user-session))
+       ;; ## TODO: Factor as fx, but is it ever running?
        (when (and
-              (not (.isUserSignedIn user-session))
+              #_(not (.isUserSignedIn user-session))
               (.isSignInPending user-session))
          (timbre/info "Blockstack signin is pending")
          (-> (.handlePendingSignIn user-session)
              (.then (fn [user-data]
-                      (rf/dispatch [:user-data user-data])))
+                      (timbre/debug "Got user data after resolving pending signin:" user-data)
+                      (rf/dispatch [:blockstack/user-data user-data])))
              (.catch (fn [err]
                        (timbre/warn "Failed signing in:" err)))))
-       {:dispatch [:user-session user-session]}))))
+       {:dispatch [:blockstack/user-session user-session]}))))
 
 
 (defn init-blockstack []
@@ -33,13 +37,13 @@
 ;; SESSION
 
 (rf/reg-event-db
- :user-session
+ :blockstack/user-session
  (fn [db [_ value]]
    (timbre/debug "Set user session:" value)
    (assoc db :user-session value)))
 
 (rf/reg-sub
- :user-session
+ :blockstack/user-session
  (fn [{:keys [user-session] :as db} query]
    (timbre/debug "User Session:" user-session)
    user-session))
@@ -116,17 +120,18 @@
         (js->clj data)))))
 
 (rf/reg-sub
- :user-data
+ :blockstack/user-data
  (fn [{:keys [user-session user-data] :as db} query]
    (timbre/debug "User Data:" user-data user-session)
    (or
     user-data
     ;; ## Fix: May reload data...
-    (if user-session
+    (when user-session
+      (timbre/warn "Fallback to load user data")
       (blockstack-load-user-data user-session)))))
 
 (rf/reg-event-db
- :user-data
+ :blockstack/user-data
  (fn [db [_ value]]
    (timbre/debug "Set user data:" value)
    (assoc db :user-data value)))

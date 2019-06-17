@@ -2,6 +2,7 @@
   (:require
    [taoensso.timbre :as timbre]
    [re-frame.core :as rf]
+   [reagent.core :as reagent]
    [app.state :as state]
    [mount.core :refer [defstate]]
    [app.lib.blockstack]))
@@ -55,40 +56,6 @@
 
 (defn json-stringify [j]
   (.stringify js/JSON j))
-
-(rf/reg-event-db
- :load-file
- (fn [{:keys [user-session] :as db}
-      [_ name options {:keys [process]}]]
-   (timbre/info "Load file:" name options)
-   (-> (.getFile user-session name (clj->js options))
-       (.then (fn [content]
-                (-> [:file name ((or process identity) content)]
-                    (rf/dispatch)))))
-   db))
-
-#_
-(rf/dispatch [:load-file "me.json" {:decrypt false}
-              {:process (comp js->clj parse-json)}])
-
-(rf/reg-event-db
- :put-file
- (fn [{:keys [user-session file] :as db}
-      [_ name options]]
-   (.putFile user-session name
-             (-> (get file name) clj->js json-stringify)
-             (clj->js options))
-   db))
-
-#_
-(rf/dispatch [:file "hello.json" {:hello "world"}])
-#_
-(rf/dispatch [:put-file "hello.json" {:encrypt false}])
-#_
-(rf/dispatch [:file "hello.json" {:hello "null!!!"}])
-#_
-(rf/dispatch [:load-file "hello.json" {:decrypt false}
-              {:process (comp js->clj parse-json)}])
 
 (rf/reg-sub
  :board
@@ -199,10 +166,21 @@
    (timbre/debug "Request Funds")
    (assoc db :requesting-funds (if (some? status) status true))))
 
+(rf/reg-event-fx
+ :load-user ;; load all content from files at startup
+ (fn [{:keys [db user-data] :as fx} [_]]
+   {:pre [user-data]}
+   (timbre/info "Load user setup")
+   {:db (assoc db :board state/profile-fields)}))
+
+;; ## FIX: a bit ad-hoc to make it reactive...
+(defstate load-user-state
+  :start (reagent/wrap @(rf/subscribe [:blockstack/user-data])
+                       #(when (some? %)
+                          (rf/dispatch [:load-user]))))
 
 (def initial-db
   {:debug false
-   :product {:name "Person8"}
-   :board state/profile-fields})
+   :product {:name "Person8"}})
 
 (rf/dispatch [:initialize initial-db])

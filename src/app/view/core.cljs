@@ -15,7 +15,7 @@
 
 ;; https://v3-8-0.material-ui.com/
 
-(def user-data (rf/subscribe [:user-data]))
+(def user-data (rf/subscribe [:blockstack/user-data]))
 
 ;:primary1-color (color :blue-grey900
 ;:primary2-color (color :indigo700)
