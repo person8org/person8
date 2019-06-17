@@ -5,7 +5,6 @@
     :refer [UserSession]]
    [re-frame.core :as rf]))
 
-
 (rf/reg-event-fx
  :blockstack/init
  (fn [{{:keys [user-session] :as db} :db :as fx} [_]]
@@ -14,20 +13,37 @@
      (timbre/info "Blockstack user session already established")
      (let [user-session (new UserSession)]
        (timbre/info "Blockstack user session created")
-       (timbre/debug "User is signed in already:"
-                     (.isUserSignedIn user-session))
-       ;; ## TODO: Factor as fx, but is it ever running?
-       (when (and
-              #_(not (.isUserSignedIn user-session))
-              (.isSignInPending user-session))
-         (timbre/info "Blockstack signin is pending")
-         (-> (.handlePendingSignIn user-session)
-             (.then (fn [user-data]
-                      (timbre/debug "Got user data after resolving pending signin:" user-data)
-                      (rf/dispatch [:blockstack/user-data user-data])))
-             (.catch (fn [err]
-                       (timbre/warn "Failed signing in:" err)))))
-       {:dispatch [:blockstack/user-session user-session]}))))
+       ;; ## TODO: Factor as fx
+       (cond
+
+         (.isSignInPending user-session)
+         (do
+           (timbre/info "Blockstack signin is pending")
+           (-> (.handlePendingSignIn user-session)
+               (.then (fn [user-data]
+                        (timbre/debug "Got user data after resolving pending signin:" user-data)
+                        (rf/dispatch [:blockstack/user-data user-data])
+                        (rf/dispatch [:blockstack/signed-in-status true])))
+               (.catch (fn [err]
+                         (timbre/warn "Failed signing in:" err))))
+           {:db (assoc db :user-session user-session)})
+
+         ;; should be before, no? But that causes problems...
+         (.isUserSignedIn user-session)
+         (let [user-data (.loadUserData user-session)]
+           (timbre/debug "Blockstack signed in already:" user-session user-data)
+           {:db (assoc db
+                       :user-session user-session
+                       :user-data (js->clj user-data :keywordize-keys true)
+                       :signed-in-status true)})
+
+
+         true
+         (do
+           (timbre/warn "Not logged in")
+           {:db (assoc db
+                       :signed-in-status false
+                       :user-session user-session)}))))))
 
 
 (defn init-blockstack []
@@ -36,7 +52,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SESSION
 
-(rf/reg-event-db
+(rf/reg-event-db ;; eliminate?
  :blockstack/user-session
  (fn [db [_ value]]
    (timbre/debug "Set user session:" value)
@@ -53,12 +69,16 @@
 
 (rf/reg-sub
  :signed-in-status
- (fn [{:keys [signed-in-status user-session] :as db} query]
-   (if (some? signed-in-status)
-     signed-in-status
-     (if user-session
-       (.isUserSignedIn user-session)
-       (timbre/warn "No user session established yet")))))
+ (fn [{:keys [signed-in-status] :as db} query]
+   signed-in-status))
+
+(rf/reg-event-fx
+ :blockstack/signed-in-status ;; use scarecly for override
+ (fn [{{:keys [user-session]:as db} :db :as fx}
+      [_ status]]
+   {:pre [(some? user-session)]}
+   (timbre/info "Signed in..." user-session status)
+   {:db (assoc db :signed-in-status (if (some? status) status true))}))
 
 (rf/reg-fx
  :blockstack/sign-user-in
@@ -78,16 +98,6 @@
     {:user-session user-session
      :redirect-uri redirect-uri}}))
 
-(rf/reg-event-fx
- :signed-in
- (fn [{{:keys [user-session data-storage]:as db} :db :as fx}
-      [_ query]]
-   {:pre [(some? user-session)]}
-   (timbre/info "Signed in..." user-session)
-   {:db (assoc db :signed-in-status true)
-    :blockstack/load-file
-    (assoc data-storage
-     :dispatch #(rf/dispatch [:loaded-content %]))}))
 
 (rf/reg-fx
  :blockstack/sign-user-out
@@ -111,30 +121,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; BLOCKSTACK USER DATA
 
-(def blockstack-load-user-data
-  ;; Assumes that user data doesn't change...
-  (memoize
-   (fn [user-session]
-     {:pre [(some? user-session)]}
-     (if-let [data (.loadUserData user-session)]
-        (js->clj data)))))
-
 (rf/reg-sub
  :blockstack/user-data
  (fn [{:keys [user-session user-data] :as db} query]
    (timbre/debug "User Data:" user-data user-session)
-   (or
-    user-data
-    ;; ## Fix: May reload data...
-    (when user-session
-      (timbre/warn "Fallback to load user data")
-      (blockstack-load-user-data user-session)))))
+   user-data))
 
 (rf/reg-event-db
  :blockstack/user-data
- (fn [db [_ value]]
-   (timbre/debug "Set user data:" value)
-   (assoc db :user-data value)))
+ (fn [db [_ user-data]]
+   (timbre/debug "Set user data:" user-data)
+   (assoc db :user-data (js->clj user-data :keywordize-keys true))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; BLOCKSTACK FILE DATA

@@ -7,6 +7,8 @@
    ["@material-ui/core/colors" :as colors]
    [re-frame.core :as rf]
    [reagent.core :as reagent]
+   [mount.core :refer [defstate]]
+   [app.lib.blockstack]
    [app.view.dev :as dev]
    [app.view.appbar :as appbar
     :refer [header]]
@@ -14,17 +16,6 @@
     :refer [board-pane]]))
 
 ;; https://v3-8-0.material-ui.com/
-
-(def user-data (rf/subscribe [:blockstack/user-data]))
-
-;:primary1-color (color :blue-grey900
-;:primary2-color (color :indigo700)
-;:primary3-color (color :indigo200)
-;:alternate-text-color (color :white))) ;; used for appbar text
-;:primary-text-color (color :light-black)
-
-(timbre/debug "colors:" (js-keys colors/blueGrey))
-(timbre/debug "color:" (aget colors/blueGrey "900"))
 
 (defn header-theme []
   (createMuiTheme
@@ -41,11 +32,33 @@
                ; :background (aget colors/blueGrey "700")
                :typography #js {:useNextVariants true}}})))
 
+(def user-data (rf/subscribe [:blockstack/user-data]))
+
 (def pane (rf/subscribe [:pane]))
 
 (def board-items (rf/subscribe [:board]))
 
 (def signed-in-status (rf/subscribe [:signed-in-status]))
+
+(defn authenticated-hook [signed-in-status]
+  "Affect what is shown after logging in and out"
+  (timbre/debug "Authenticated Status Changed:" signed-in-status)
+  ; class supposed to be added by script in head of html file
+  ; when returning from blockstack:
+  (js/document.documentElement.classList.remove "reloading")
+  (case signed-in-status
+    true
+    (js/document.documentElement.classList.add "authenticated")
+    false
+    (js/document.documentElement.classList.remove "authenticated")
+    nil))
+
+(defn on-authenticated-changes []
+  (authenticated-hook @signed-in-status))
+
+(defstate authenticated-track
+  :start (reagent/track! on-authenticated-changes)
+  :end (reagent/dispose! authenticated-track))
 
 (defn page [{:keys [open]}]
   [:div (if-not open {:style {:display "none"}})

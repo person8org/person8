@@ -21,8 +21,7 @@ body {
   opacity: 0.5;
 }
 
-
-/* Reloading after authentication */
+/* Reloading after blockstack authentication */
 
 .reloading .landing {
   display:  none;
@@ -34,4 +33,10 @@ body {
 
 .reloading .reload {
   display: block;
+}
+
+/* Status after verified authenticated */
+
+.authenticated .landing {
+  display: none;
 }

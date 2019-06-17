@@ -38,7 +38,8 @@
  :user-name
  (fn [{:keys [user-data] :as db} query]
    (if user-data
-     (.-username user-data))))
+     (or (:username user-data)
+         (.-username user-data)))))
 
 (rf/reg-event-db
  :file
@@ -168,19 +169,37 @@
 
 (rf/reg-event-fx
  :load-user ;; load all content from files at startup
- (fn [{:keys [db user-data] :as fx} [_]]
+ (fn [{{:keys [user-data] :as db} :db :as fx} [_]]
    {:pre [user-data]}
    (timbre/info "Load user setup")
    {:db (assoc db :board state/profile-fields)}))
 
-;; ## FIX: a bit ad-hoc to make it reactive...
+(def user-data-sub (rf/subscribe [:blockstack/user-data]))
+
+(defn on-user-data-change []
+  (let [user-data @user-data-sub]
+    (timbre/debug "Tracked User Data:" user-data)
+    (if (some? user-data)
+      (rf/dispatch [:load-user])
+      (timbre/warn "No user data"))))
+
+(defstate user-data-track
+  :start (reagent/track! on-user-data-change)
+  :end (reagent/dispose! user-data-track))
+
+
+#_ ; ;; ## not triggered but why?
 (defstate load-user-state
-  :start (reagent/wrap @(rf/subscribe [:blockstack/user-data])
-                       #(when (some? %)
-                          (rf/dispatch [:load-user]))))
+  :start (reagent/wrap @user-data-sub
+                       #(if (some? %)
+                          (rf/dispatch [:load-user])
+                          (timbre/warn "No user data"))))
 
 (def initial-db
-  {:debug false
+  {;:debug true
    :product {:name "Person8"}})
 
 (rf/dispatch [:initialize initial-db])
+
+#_
+(rf/dispatch [:debug true])

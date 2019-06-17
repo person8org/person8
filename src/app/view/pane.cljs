@@ -11,7 +11,7 @@
    [taoensso.timbre :as timbre]
    ["@material-ui/core" :as mui]
    ["@material-ui/icons/FileCopy" :default CopyIcon]
-   ["@material-ui/icons/ExpandMore" :default ExpandMoreIcon]
+   ["@material-ui/icons/ExpandMore" :default ExpandIcon]
    ["@material-ui/icons/Assignment" :default DocIcon]
    ["@material-ui/icons/AssignmentLate" :default NoDocIcon]
    ["@material-ui/icons/Edit" :default image-edit]
@@ -87,7 +87,8 @@
     [ui/card {:style {:width "100%"}}
      [:> mui/ExpansionPanel
       [:> mui/ExpansionPanelSummary
-       {:expand-icon [:> ExpandMoreIcon]}
+       {:expand-icon (-> [:> ExpandIcon]
+                         reagent/as-element)}
        [ui/card-header
         {:title (reagent/as-element
                  [:span label
