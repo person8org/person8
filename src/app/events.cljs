@@ -29,11 +29,6 @@
    (timbre/debug "DB:" db)
    (if (empty? db) initial db)))
 
-(rf/reg-sub
- :db
- (fn [db [_ & query]]
-   db))
-
 (rf/reg-event-db
    :pane
    [(log-event "Change pane:")]
@@ -63,7 +58,7 @@
    (-> (get db :file)
        (get query))))
 
-(defn parse-json [s]
+(defn ^{:foo abcd} parse-json [s]
   (.parse js/JSON s))
 
 (defn json-stringify [j]

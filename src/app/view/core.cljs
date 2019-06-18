@@ -9,7 +9,7 @@
    [reagent.core :as reagent]
    [mount.core :refer [defstate]]
    [app.lib.blockstack]
-   [app.view.dev :as dev]
+   [app.lib.dev :as dev]
    [app.view.appbar :as appbar
     :refer [header]]
    [app.view.board

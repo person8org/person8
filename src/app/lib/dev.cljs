@@ -1,4 +1,4 @@
-(ns app.view.dev
+(ns app.lib.dev
   (:require
    [taoensso.timbre :as timbre]
    ["@material-ui/core" :as mui]
@@ -6,8 +6,9 @@
    [reagent.core :as reagent]
    [app.events]))
 
-
 "Experimental features and development tools"
+
+;; ## TODO: Eliminate MUI dependency?
 
 (defn ppr-str [data]
   "Like pr-str but pretty print with indents"
@@ -43,6 +44,12 @@
    [:> mui/CardContent
     [data-table (js->clj @user-data)]]])
 
+(rf/reg-sub
+ :db
+ (fn [db [_ & path]]
+   (if (some? path)
+     (get-in db path)
+     db)))
 
 (def db (rf/subscribe [:db]))
 

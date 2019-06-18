@@ -3,6 +3,9 @@
    [cljs.core.async.macros
     :refer [go go-loop]])
   (:require
+   [goog.fs
+    :refer [get-blob get-blob-with-properties]])
+  (:require
    [cljs.core.async :as async
     :refer [<! chan close! alts! timeout put!]]
    [clojure.spec.alpha :as s]
@@ -58,9 +61,13 @@
 (defn make-image [path filedata]
   ; filedata is string or .ArrayBuffer
   (timbre/debug "make image:" path filedata)
-  (Image. path (if filedata (as-url filedata))))
+  (->Image path (if filedata (as-url filedata))))
 
 (defn as-blob [data {:keys [type]}]
+  (if (some? type)
+    (get-blob-with-properties [data] type)
+    (get-blob data))
+  #_ ; better use goog for compatibility
   (new js/Blob [data] #js{:type type}))
 
 (defn load-image [{:keys [user-session path options]}]
@@ -90,7 +97,7 @@
   ;; should never store on top of existing file
   (timbre/debug "Store image:" path content)
   (let [out (async/promise-chan)
-        collect #(put! out (Image. path (as-url %)))]
+        collect #(put! out (->Image path (as-url %)))]
     (go
      (-> (.putFile user-session path (<!(encode-image content)) (clj->js options))
          (.finally #(collect content))
