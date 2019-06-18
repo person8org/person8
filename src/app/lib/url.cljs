@@ -4,7 +4,7 @@
    [goog.fs :as fs]))
 
 (defn as-url [object]
-  {:pre [(some? object)]
+  {:pre [(some? object)] ; File or Blob
    :post [string?]}
   (if (goog.fs.url.browserSupportsObjectUrls)
     (goog.fs.url.createObjectUrl object)

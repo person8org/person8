@@ -124,7 +124,7 @@
 (rf/reg-sub
  :blockstack/user-data
  (fn [{:keys [user-session user-data] :as db} query]
-   (timbre/debug "User Data:" user-data user-session)
+   #_(timbre/debug "User Data:" user-data user-session)
    user-data))
 
 (rf/reg-event-db
@@ -140,6 +140,7 @@
  :blockstack/load-file
  (fn [{:keys [user-session path options reader dispatch]
        :or {reader identity}}]
+   {:pre [(some? user-session)]}
    (timbre/debug "Load blockstack file:" path)
    (-> (.getFile user-session path options)
        (.then (fn [content]
@@ -154,24 +155,23 @@
  :blockstack/store-file
  (fn [{:keys [user-session path content options writer dispatch]
        :or {writer identity}}]
+   {:pre [(some? user-session)]}
    (timbre/debug "Store blockstack file:" path)
    (-> (.putFile user-session path (writer content)(clj->js options))
-       (.finally (fn [] (if dispatch (dispatch)))))))
+       (.catch #(timbre/error "Failed storing file:" %))
+       (.finally (fn [] (if dispatch (dispatch content)))))))
 
-(rf/reg-event-db
- :loaded-content
- (fn [{:keys [] :as db} [_ content]]
-   (timbre/info "Loaded content:" content)
-   (assoc db :content content)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; BLOCKSTACK DIRECTORY
 
-(rf/reg-event-fx
- :change-content
- (fn [{{:keys [content data-storage] :as db} :db :as fx} [_ new-content]]
-   (timbre/info "Change content:" new-content)
-   {:db
-    (if (not= content new-content)
-      (assoc db :content content)
-      db)
-    :blockstack/store-file
-    (assoc data-storage
-           :dispatch nil)}))
+(rf/reg-fx
+ :blockstack/list-files
+ (fn [{:keys [user-session]}]
+   (let [files (atom [])]
+     (-> (.listFiles user-session
+                     (fn [file]
+                       (swap! files conj file)
+                       #_(timbre/info "File:" file)
+                       true))
+         (.then #(timbre/info "Files (" % "):" (clojure.string/join " " @files)))
+         (.catch #(timbre/error "Failed listing files:" %))))))

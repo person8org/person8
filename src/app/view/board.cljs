@@ -29,7 +29,7 @@
            {:drop (fn [e files]
                     (timbre/debug "Drop:" files)
                     (let [[file] (js->clj (js/Array.from files))]
-                      (rf/dispatch [:replace-image item (decode-file file)])))})))
+                      (rf/dispatch [:user/drop item (decode-file file)])))})))
       :component-will-unmount
       (fn [comp]
         (timbre/debug "Unmount dropzone:" comp)

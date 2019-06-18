@@ -70,6 +70,7 @@
     out))
 
 (defn file-as-blob-async [file cb]
+  ; https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsArrayBuffer
   (let [reader (new js/FileReader)]
     (set! (.-onload reader)
           #(cb (.-result reader)))

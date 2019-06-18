@@ -40,6 +40,8 @@
 
 (def signed-in-status (rf/subscribe [:signed-in-status]))
 
+(def debug (rf/subscribe [:debug]))
+
 (defn authenticated-hook [signed-in-status]
   "Affect what is shown after logging in and out"
   (timbre/debug "Authenticated Status Changed:" signed-in-status)
@@ -63,7 +65,7 @@
 (defn page [{:keys [open]}]
   [:div (if-not open {:style {:display "none"}})
    [:div {:style {:background-color (aget colors/blueGrey "700")}}
-    (case (or @pane :default)
+    (case (if @debug (or @pane :default) :default)
       :profile [dev/user-profile-card {:user-data user-data}]
       :state [dev/state-inspector]
       :default [board-pane (or @board-items)])]])

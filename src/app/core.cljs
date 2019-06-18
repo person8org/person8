@@ -8,7 +8,8 @@
    [app.datatransfer]
    [app.routing]
    [app.drop]
-   [app.events]))
+   [app.events]
+   [app.store]))
 
 (defn mount-root []
   (r/render-component [view/app]
