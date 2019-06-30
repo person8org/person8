@@ -3,7 +3,7 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/0ee6baf5-bfde-4f7a-ac0d-d4856b61677e/deploy-status)](https://app.netlify.com/sites/person8/deploys)
 
-![Pietron Logo](https://pietron.app/media/icon.png][Support us on
+![Pietron Logo](https://pietron.app/media/icon.png)[Support us on
 Pietron!](https://pietron.app/new?name=Person8&address=3QZd2cvtAod5EJuCA1S726RTjnTTrTTp8U)
 
 ## Setup And Run
