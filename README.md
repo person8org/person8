@@ -1,25 +1,12 @@
 # Person8
+## A Lifeline for the Digital Nomad
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/0ee6baf5-bfde-4f7a-ac0d-d4856b61677e/deploy-status)](https://app.netlify.com/sites/person8/deploys)
 
-## Based on shadow-cljs, proto-repl, reagent template
-
-`shadow-cljs` is a build tool for ClojureScript.
-
-`proto-repl` is a Clojure(Script) dev env for [Atom](https://atom.io/)
-
-`reagent` is a ClojureScript wrapper for [React](https://reactjs.org/).
-
-Shadow walk-through:
-
-http://manuel-uberti.github.io/programming/2018/11/14/deps-shadow-cljs/
-
+![Pietron Logo](https://pietron.app/media/icon.png][Support us on
+Pietron!](https://pietron.app/new?name=Person8&address=3QZd2cvtAod5EJuCA1S726RTjnTTrTTp8U)
 
 ## Setup And Run
-#### Copy repository
-```shell
-git clone https://github.com/jacekschae/shadow-reagent.git && cd shadow-reagent
-```
 
 #### Install dependencies
 ```shell
