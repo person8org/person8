@@ -77,6 +77,11 @@
              (map #(assoc % :selected (= % item))
                   items)))))
 
+(rf/reg-sub
+ :selected
+ (fn [{:as db} [_]]
+   (filter :selected (:board db))))
+
 (defn update-board [{:keys [board] :as db} id f & args]
   "DB with the matching board item updated by the function f"
   (assoc db :board
@@ -127,9 +132,17 @@
  (fn [{{:keys [user-session] :as db} :db :as  fx}
       [_ {:keys [id] :as item}{:keys [url data] :as file}]]
    (let [path (str (random-uuid))]
-     (assoc fx
-       :store/store-image {:user-session user-session :path path :data data}
-       :db (update-board db id assoc :image url :path path)))))
+     {:store/store-image {:user-session user-session :path path :data data}
+      :db (update-board db id assoc :image url :path path)})))
+
+(rf/reg-event-fx
+ :user/upload
+ [(log-event)]
+ (fn [{{:keys [user-session] :as db} :db :as  fx}
+      [_ {:keys [id] :as item}{:keys [url data] :as file}]]
+   (let [path (str (random-uuid))]
+     {:store/store-image {:user-session user-session :path path :data data}
+      :db (update-board db id assoc :image url :path path)})))
 
 (rf/reg-event-db
  :drag

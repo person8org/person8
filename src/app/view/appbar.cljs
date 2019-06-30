@@ -6,14 +6,19 @@
    ["@material-ui/icons/Menu" :default AppIcon]
    ["@material-ui/icons/FlashOn" :default LightningIcon]
    ["@material-ui/icons/AccountCircle" :default AccountCircle]
+   ["@material-ui/icons/CloudUpload" :default UploadIcon]
    ["@material-ui/core/styles"
     :refer [makeStyles]]
    [re-frame.core :as rf]
-   [reagent.core :as reagent]))
+   [reagent.core :as reagent]
+   [app.drop
+    :refer [decode-file]]))
 
 (def debug (rf/subscribe [:debug]))
 
 (def user-name (rf/subscribe [:user-name]))
+
+(def selected (rf/subscribe [:selected]))
 
 (defn short-username-field [{:keys [user-name]}]
   (if (string? user-name)
@@ -70,6 +75,33 @@
                     :on-click action}
      [:> LightningIcon]]))
 
+(defn upload-file []
+  (timbre/debug "Upload file"))
+
+(defn uploaded [evt]
+  (timbre/debug "Uploaded: e")
+  (let [files (.. evt -target -files)
+        [file] (js->clj (js/Array.from files))]
+    ;; # FIX: @selected should be in argument in case it changed...
+    (rf/dispatch [:user/upload (first @selected)(decode-file file)])))
+
+(defn upload-button [{:keys [active]}]
+  (timbre/debug "Upload button:" active @selected)
+  [:div {:style (if-not active {:display "none"})}
+    #_
+    [:label {:html-for "file-upload"}
+      [:> mui/Button {:color "inherit"
+                      ; :on-click upload-file
+                      :disabled (not active)}
+
+        [:> UploadIcon]]]
+    [:input
+      {:accept "image/*"
+       ; :style {:display "none"}
+       :type "file"
+       :on-change uploaded
+       :id "file-upload"}]])
+
 
 (def signed-in-status (rf/subscribe [:signed-in-status]))
 (def product (rf/subscribe [:product]))
@@ -84,5 +116,6 @@
      [:> mui/Typography {:variant "h6"
                          :style {:flex 1}}
       (get @product :name "App")]
+     [upload-button {:active (not (empty? @selected))}]
      [lightning-button {:active (not @requesting-funds)}]
      [user-status-area {:signed-in-status @signed-in-status}]]]])
