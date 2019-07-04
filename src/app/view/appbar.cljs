@@ -70,10 +70,11 @@
 
 (defn lightning-button [{:keys [active]}]
   (let [action #(rf/dispatch [:request-funds active])]
-    [:> mui/Button {:color "inherit"
-                    :style {:color (if active "yellow" "inherit")}
-                    :on-click action}
-     [:> LightningIcon]]))
+    [:> mui/Tooltip {:title (if active "Request funds" "Hide funds request")}
+     [:> mui/Button {:color "inherit"
+                     :style {:color (if active "yellow" "inherit")}
+                     :on-click action}
+      [:> LightningIcon]]]))
 
 (defn upload-file []
   (timbre/debug "Upload file"))
@@ -86,22 +87,26 @@
     (rf/dispatch [:user/upload (first @selected)(decode-file file)])))
 
 (defn upload-button [{:keys [active]}]
+  ; see upload button example: https://material-ui.com/components/buttons/#contained-buttons
   (timbre/debug "Upload button:" active @selected)
-  [:div {:style (if-not active {:display "none"})}
-    #_
-    [:label {:html-for "file-upload"}
-      [:> mui/Button {:color "inherit"
-                      ; :on-click upload-file
-                      :disabled (not active)}
-
-        [:> UploadIcon]]]
-    [:input
+  (let [selected-label (:label (first @selected))
+        tooltip (if selected-label
+                  (str "Upload " selected-label)
+                  "Upload Image")]
+    [:div {:style (if-not active {:display "none"})}
+     [:input
       {:accept "image/*"
+       :hidden true
        ; :style {:display "none"}
        :type "file"
        :on-change uploaded
-       :id "file-upload"}]])
-
+       :id "file-upload"}]
+     [:label {:html-for "file-upload"}
+      [:> mui/Tooltip {:title tooltip}
+       [:> mui/Button
+        {; :variant "contained"
+         :component "span"}
+        [:> UploadIcon]]]]]))
 
 (def signed-in-status (rf/subscribe [:signed-in-status]))
 (def product (rf/subscribe [:product]))
