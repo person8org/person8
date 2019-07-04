@@ -22,8 +22,8 @@
    (clj->js
     {:palette {:type "dark"
                :primary colors/blueGrey
-               :primary-text-color colors/white
-               :typography {:useNextVariants true}}})))
+               :primary-text-color colors/white}
+     :typography {:useNextVariants true}})))
 
 (defn custom-theme []
   (createMuiTheme
