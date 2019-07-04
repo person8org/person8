@@ -1,6 +1,14 @@
 {:lein true
- :nrepl {:port 3333}
+ :source-paths ["src"]
+ ; https://shadow-cljs.github.io/docs/UsersGuide.html#_embedded_nrepl_server
+ :nrepl {:init-ns user  ; proto-repl calls user/reset
+         :port 3333
+         ;; are these loaded???
+         :middleware [#_shadow.cljs.devtools.server.nrepl/cljs-load-file
+                      #_shadow.cljs.devtools.server.nrepl/cljs-eval
+                      #_shadow.cljs.devtools.server.nrepl/cljs-select]}
  ; :dev-http {8000 "public"} ;; redundant for testing
+
  :builds
  {:app {:target :browser
         :output-dir "public/js"
