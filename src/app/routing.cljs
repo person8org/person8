@@ -1,43 +1,45 @@
 (ns app.routing
   (:require
    [taoensso.timbre :as timbre]
-   [accountant.core :as accountant]
    [reitit.core :as router]
+   [reitit.frontend :as frontend]
+   [reitit.frontend.easy :as easy]
+   [reitit.coercion :as coercion]
+   [reitit.coercion.spec :as rspec]
    [re-frame.core :as rf]
    [mount.core :refer [defstate]]))
 
-
 (def routes
-  (router/router
-    [["/signin" :app/signin]
-     ["/exit" :app/exit]
-     ["/enter" :app/enter]
-     ["/demo" :app/demo]]))
+    [["/signin" {:name :app/signin}]
+     ["/exit" {:name :app/exit}]
+     ["/enter" {:name :app/enter}]
+     ["/demo" {:name :app/demo}]])
 
+(rf/reg-fx
+ ::navigate!
+ (fn [k params query]
+   (easy/push-state k params query)))
+
+(rf/reg-event-fx
+ ::navigate
+ (fn [{:keys [db] :as fx} [_ match]]
+   (timbre/debug "Navigate:" match)
+   (when match
+     (let [name (get-in match [:data :name])
+           params (get-in match [:path-params])
+           query (get-in match [:query-params])]
+       {:dispatch [name {:params params :query query}]}))))
 
 (defn enable-routing []
-  (timbre/debug "Enable routing")
-  (accountant/configure-navigation!
-   {:reload-same-path? true
-    :nav-handler
-    (fn [path]
-      (timbre/info "Navgiate:" path)
-      (if-let [match (router/match-by-path routes path)]
-        (let [{:keys [data path-params]} match
-              name (:name data)]
-          (rf/dispatch [name path-params]))))
-    :path-exists?
-    (fn [path]
-      (timbre/debug "Path Exists?" path)
-      (if (router/match-by-path routes path)
-        true)
-      true)}))
-
-(defn disable-routing []
-  #_
-  (accountant/unconfigure-navigation!))
-
+  (easy/start!
+    (frontend/router routes {:data {:coercion rspec/coercion}})
+    (fn [new-match]
+      (timbre/debug "Route match:" new-match)
+      (rf/dispatch [::navigate new-match]))
+    ;; set to false to enable HistoryAPI
+    ;; if true query args aren't passed on...
+    ;; should perhaps be reported as issue to reitit?
+    {:use-fragment false}))
 
 (defstate routing-state
-  :start (enable-routing)
-  :end (disable-routing))
+  :start (enable-routing))

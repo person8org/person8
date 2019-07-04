@@ -28,9 +28,9 @@
 (defn custom-theme []
   (createMuiTheme
    (clj->js
-    {:palette {:type "dark"
+    {:palette {:type "dark"}
                ; :background (aget colors/blueGrey "700")
-               :typography #js {:useNextVariants true}}})))
+     :typography {:useNextVariants true}})))
 
 (def user-data (rf/subscribe [:blockstack/user-data]))
 
