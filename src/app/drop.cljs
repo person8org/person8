@@ -54,7 +54,6 @@
   (dnd/unsubscribe! js/document.documentElement
                     :unique-key))
 
-#_
 (defstate drop-target
   :start (enable-drop)
   :stop (disable-drop))

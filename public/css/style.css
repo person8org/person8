@@ -3,6 +3,10 @@ body {
   background-color: gray;
 }
 
+.inspect {
+  border: solid thin red;
+}
+
 #app {
   min-height: 56px;
 }
@@ -39,4 +43,19 @@ body {
 
 .authenticated .landing {
   display: none;
+}
+
+/* Drop zone area overlaying the image */
+
+.dropzone-area {
+  height: 100%;
+  opacity: 0.0;
+}
+
+.dropzone-area:hover {
+  opacity: 0.7;
+}
+
+.show-dropzone .dropzone-area {
+  opacity: 0.7;
 }

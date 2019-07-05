@@ -15,15 +15,46 @@
    ["@material-ui/icons/Assignment" :default DocIcon]
    ["@material-ui/icons/AssignmentLate" :default NoDocIcon]
    ["@material-ui/icons/Edit" :default image-edit]
-   ["@material-ui/icons/Person" :default social-person]
+   ["material-ui-dropzone"
+    :refer [DropzoneArea DropzoneDialog]]
+   [cljs-drag-n-drop.core :as dnd]
    [app.lib.reagent-mui :as ui]
    [goog.string :as gstring]
+   [app.drop
+    :refer [decode-file]]
    [app.view.share :as share-view
     :refer [share-option]]))
 
+(def drag-status (rf/subscribe [:drag]))
 
-(defmulti pane (fn [{:keys [stage] :as session}]
-                  (if stage [@stage])))
+(defn drop-zone [{:keys [item]} & children]
+  ;; consider instead using https://www.npmjs.com/package/material-ui-dropzone
+  (let [unique-key (keyword (str "drop-zone-" (random-uuid)))]
+    (reagent/create-class
+     {:component-did-mount
+      (fn [comp]
+        (timbre/debug "Mount dropzone:" comp)
+        (let [node (reagent/dom-node comp)]
+          (dnd/subscribe!
+           node unique-key
+           {:drop (fn [e files]
+                    (timbre/debug "Drop:" files)
+                    (let [[file] (js->clj (js/Array.from files))]
+                      (rf/dispatch [:user/drop item (decode-file file)])))})))
+      :component-will-unmount
+      (fn [comp]
+        (timbre/debug "Unmount dropzone:" comp)
+        (let [node (reagent/dom-node comp)]
+          (dnd/unsubscribe! node unique-key)))
+      :reagent-render
+      (fn [{:keys [item]} & children]
+        ;; Bug: Not updating item if changed
+        (into [:<>] children))})))
+
+(defn pick-zone [{:keys [item] :as props} & children]
+  (let [on-click #(rf/dispatch [:select item])]
+    (into [:div (assoc props :on-click on-click)]
+          children)))
 
 (defn navigator [{:keys [tab] :as session}]
   [ui/card
@@ -36,37 +67,11 @@
              :href (str "#tab/" id)}
             title]))])
 
-
 (defn edit-button []
   [ui/raised-button
    {:label ""
     :label-position "before"
     :icon (image-edit)}])
-
-
-(defn identity-card [{:keys [mobile] :as session}]
-  (let [share false
-        profile (get-in @mobile [:user :profile])
-        content {:text (str (:firstName profile) " " (:lastName profile))}
-        feedback (atom nil)]
-    [ui/card {:style {:margin-top "0.3em"}}
-     [ui/card-header
-      {:avatar (social-person)
-       :title "Your Name"
-       :subtitle "What you prefer to be called"}]
-     [ui/card-text (:firstName profile) " " (:lastName profile)]
-     [ui/card-actions
-      (if share
-        [:div {:style {:display "flex"
-                       :justify-content "flex-end"
-                       :width "100%"
-                       :padding 0}}
-         [share-option
-          {:id "name"
-           :content content
-           :label "Send name"
-           :feedback feedback}]])]]))
-
 
 (defn events-list [{events :events}]
     (into [ui/list
@@ -76,6 +81,35 @@
              {:primary-text label
               :secondary-text timestamp}])))
 
+#_
+(defn drop-zone-area [{:keys [item]} & children]
+  [:div {:style {:position "relative"}}
+   [:> DropzoneArea
+    {:on-change #(js/alert "changed")}]
+   children])
+
+(defn on-drop-fn [item]
+  (fn [file]
+    (timbre/info "Dropzone file:" file)
+    (rf/dispatch [:user/drop item (decode-file (js->clj file))])))
+
+(defn card-image-slot [{:keys [item image show-dropzone]}]
+  (timbre/debug "Card image slot:" show-dropzone)
+  [:div {:style {:position "relative"}}
+   [ui/card-media {:style {:height "auto"}
+                   :image image
+                   :component "img"}]
+   [:div {:class-name (if show-dropzone "show-dropzone")
+          :style {:position "absolute"
+                  :top 0
+                  :height "100%"}}
+    [:> DropzoneArea
+     {:accepted-files #js["image/*"]
+      :files-limit 1
+      :show-previews-in-dropzone false
+      :drop-zone-class "dropzone-area"
+      :on-change #(timbre/debug "Change in dropzone")
+      :on-drop (on-drop-fn item)}]]])
 
 (defn profile-card [{:keys [id label description edit share image expandable text events]
                      :as item}]
@@ -103,11 +137,13 @@
                         [:> NoDocIcon])]
                      reagent/as-element)}]]
       [ui/expansion-panel-details
-        [ui/card-action-area
+        [ui/card-content
+         {:style {:width "100%"}}
          (if image
-           [ui/card-media {:style {:height "auto"}
-                           :image image
-                           :component "img"}])]
+           [card-image-slot
+            {:item item
+             :show-dropzone (contains? #{:start :enter} @drag-status)
+             :image image}])]
        (if image
         [ui/card-actions
          (if (and share true)
@@ -127,11 +163,9 @@
          (if (and events @expanded)
            [events-list {:events events}])])]]])))
 
-(defmethod pane :default [{:keys [mobile profile] :as session}]
-  [:div {:style {:padding-top "60px"}}
-   (if (= (get-in @mobile [:user :status]) "SUCCESS")
-     (into
-      [:div [identity-card session]]
-      (for [item (:fields @profile)]
-        [profile-card item]))
-    [:div])])
+(defn view [{:keys [item]}]
+  [drop-zone {:item item
+              :style {:width "100%"}}
+    [pick-zone {:item item
+                :style {:width "100%"}}
+      [profile-card item]]])

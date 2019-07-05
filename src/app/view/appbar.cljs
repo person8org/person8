@@ -80,7 +80,7 @@
   (timbre/debug "Upload file"))
 
 (defn uploaded [evt]
-  (timbre/debug "Uploaded: e")
+  (timbre/debug "Uploaded:" evt)
   (let [files (.. evt -target -files)
         [file] (js->clj (js/Array.from files))]
     ;; # FIX: @selected should be in argument in case it changed...
