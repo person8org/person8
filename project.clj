@@ -20,14 +20,14 @@
 
   :repl-options {:nrepl-middleware
                  ;; 04 to ensure compatiblity with [nrepl 4+]
-                 [#_shadow.cljs.devtools.server.nrepl04/shadow-init ;; loads shadow-cljs.edn
-                  #_shadow.cljs.devtools.server.nrepl04/cljs-load-file
-                  #_shadow.cljs.devtools.server.nrepl04/cljs-eval
+                 [shadow.cljs.devtools.server.nrepl04/shadow-init ;; loads shadow-cljs.edn
+                  shadow.cljs.devtools.server.nrepl04/cljs-load-file
+                  shadow.cljs.devtools.server.nrepl04/cljs-eval
                   ; include to fix nrepl-select failing with "Can't change/establish root binding of: *nrepl-cljs*"
                   shadow.cljs.devtools.server.nrepl04/cljs-select
                   ;; didn't eliminate the issue "Can't change/establish root binding of: *cljs-compiler-env* with set"
                   ;; but warning is ignorable ans mentioned in shadow.cljs.devtools.api
-                  #_cemerick.piggieback/wrap-cljs-repl]}
+                  cider.piggieback/wrap-cljs-repl]}
 
   :profiles
   {:dev

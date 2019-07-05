@@ -81,17 +81,22 @@
              {:primary-text label
               :secondary-text timestamp}])))
 
-#_
-(defn drop-zone-area [{:keys [item]} & children]
-  [:div {:style {:position "relative"}}
-   [:> DropzoneArea
-    {:on-change #(js/alert "changed")}]
-   children])
-
-(defn on-drop-fn [item]
+(defn on-drop-fn [{:keys [item]}]
   (fn [file]
-    (timbre/info "Dropzone file:" file)
-    (rf/dispatch [:user/drop item (decode-file (js->clj file))])))
+    ; this.state.fileObjects
+    (let [current (reagent.core/current-component)]
+      (this-as this
+               (timbre/info "Dropzone file:" file (js-keys this) current #_(.. this -state -fileObjects))
+               (rf/dispatch [:user/drop item (decode-file (js->clj file))])))))
+
+(defn drop-zone-area [{:keys [item]}]
+  [:> DropzoneArea
+   {:accepted-files #js["image/*"]
+    :files-limit 1
+    :show-previews-in-dropzone false
+    :drop-zone-class "dropzone-area"
+    :on-change #(timbre/debug "Change in dropzone")
+    :on-drop (on-drop-fn {:item item})}])
 
 (defn card-image-slot [{:keys [item image show-dropzone]}]
   (timbre/debug "Card image slot:" show-dropzone)
@@ -103,13 +108,7 @@
           :style {:position "absolute"
                   :top 0
                   :height "100%"}}
-    [:> DropzoneArea
-     {:accepted-files #js["image/*"]
-      :files-limit 1
-      :show-previews-in-dropzone false
-      :drop-zone-class "dropzone-area"
-      :on-change #(timbre/debug "Change in dropzone")
-      :on-drop (on-drop-fn item)}]]])
+      [drop-zone-area {:item item}]]])
 
 (defn profile-card [{:keys [id label description edit share image expandable text events]
                      :as item}]
