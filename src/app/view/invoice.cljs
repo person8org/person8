@@ -3,6 +3,7 @@
    [taoensso.timbre :as timbre]
    ["@material-ui/core" :as mui]
    ["@material-ui/icons/FlashOn" :default MoneyIcon]
+   ["@material-ui/icons/OfflineBolt" :default LightningIcon]
    ["@material-ui/icons/EnhancedEncryption" :default EncryptIcon]
    ["bolt11" :as bolt11]
    [re-frame.core :as rf]
@@ -92,7 +93,7 @@
             {:title "Payment Request"
              :subheader "Receive funds through the Lightning Network"
              :avatar (-> [:> mui/Avatar
-                          [:> MoneyIcon
+                          [:> LightningIcon
                             {:style {:color "yellow"}}]]
                          reagent/as-element)}]
            [ui/card-content

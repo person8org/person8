@@ -4,7 +4,8 @@
    [clojure.string :as string]
    ["@material-ui/core" :as mui]
    ["@material-ui/icons/Menu" :default AppIcon]
-   ["@material-ui/icons/FlashOn" :default LightningIcon]
+   ["@material-ui/icons/FlashOn" :default LightningIcon2]
+   ["@material-ui/icons/OfflineBolt" :default LightningIcon]
    ["@material-ui/icons/AccountCircle" :default AccountCircle]
    ["@material-ui/icons/CloudUpload" :default UploadIcon]
    ["@material-ui/core/styles"
