@@ -1,18 +1,19 @@
 (defproject shadow-reagent-proto-repl "0.1.0-SNAPSHOT"
   :description "A leiningen project to use proto repl with shadow-cljs."
+  :managed-dependencies [[reagent "0.9.0-SNAPSHOT"]
+                         [re-frame "0.10.6"]]
   :dependencies [[org.clojure/clojure "1.10.0"]
+                 ; [org.clojure/clojurescript "1.10.520"]
                  [org.clojure/core.async "0.4.490"]
                  [thheller/shadow-cljs "2.8.39"]
                  ; [binaryage/devtools "0.9.10"]
-                 [proto-repl "0.3.1"] ;; # FIX: Move to dev?
                  [com.taoensso/timbre "4.10.0"]
-                 [reagent "0.9.0-SNAPSHOT"]
-                 [re-frame "0.10.6"]
+                 [reagent]
+                 [re-frame]
                  [metosin/reitit "0.3.9"]
                  [mount "0.1.16"]
                  [cljs-http "0.1.46"]
                  [cljs-drag-n-drop "0.1.0"]]
-
 
   :min-lein-version "2.8.3"
 
@@ -31,7 +32,10 @@
                   cider.piggieback/wrap-cljs-repl]}
 
   :profiles
-  {:dev
+  {:repl
+   {:dependencies []}
+   :dev
    {:source-paths ["dev" "src"]
-    :dependencies [;; nrepl has been upgraded to new coordinates, used by shadow-cljs:
+    :dependencies [[proto-repl "0.3.1"]
+                   ;; nrepl has been upgraded to new coordinates, used by shadow-cljs:
                    [nrepl "0.6.0"]]}})

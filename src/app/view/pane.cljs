@@ -15,6 +15,7 @@
    ["@material-ui/icons/Assignment" :default DocIcon]
    ["@material-ui/icons/AssignmentLate" :default NoDocIcon]
    ["@material-ui/icons/Edit" :default image-edit]
+   #_
    ["material-ui-dropzone"
        :refer [DropzoneArea]]
    [cljs-drag-n-drop.core :as dnd]
@@ -91,6 +92,7 @@
                (rf/dispatch [:user/drop item (decode-file (js->clj file))])))))
 
 (defn drop-zone-area [{:keys [item]}]
+  #_
   [:> DropzoneArea
    {:accepted-files #js["image/*"]
     :files-limit 1

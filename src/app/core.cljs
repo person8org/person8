@@ -1,5 +1,6 @@
 (ns app.core
   (:require
+   ["react" :as react] ;; required for mui...
    [reagent.core :as r]
    [mount.core :as mount]
    [app.view.core :as view]
