@@ -27,7 +27,7 @@
     "create-react-class": "~15.6.3",
     "isarray": "^2.0.4",
     "load-styles": "^2.0.0",
-    "material-ui-dropzone": "~2.4.0",
+    "material-ui-dropzone": "^2.4.0",
     "react": "~16.8.1",
     "react-dom": "~16.8.1",
     "triplesec": "^3.0.26"
