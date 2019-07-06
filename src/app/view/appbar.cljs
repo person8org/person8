@@ -16,10 +16,10 @@
     :refer [decode-file]]))
 
 (def debug (rf/subscribe [:debug]))
-
 (def user-name (rf/subscribe [:user-name]))
-
 (def selected (rf/subscribe [:selected]))
+(def signed-in-status (rf/subscribe [:signed-in-status]))
+(def product (rf/subscribe [:product]))
 
 (defn short-username-field [{:keys [user-name]}]
   (if (string? user-name)
@@ -69,13 +69,14 @@
 
 (def requesting-funds (rf/subscribe [:requesting-funds]))
 
-(defn lightning-button [{:keys [active]}]
+(defn lightning-button [{:keys [active hidden]}]
   (let [action #(rf/dispatch [:request-funds active])]
-    [:> mui/Tooltip {:title (if active "Request funds" "Hide funds request")}
-     [:> mui/Button {:color "inherit"
-                     :style {:color (if active "yellow" "inherit")}
-                     :on-click action}
-      [:> LightningIcon]]]))
+    (if-not hidden
+     [:> mui/Tooltip {:title (if active "Request funds" "Hide funds request")}
+      [:> mui/Button {:color "inherit"
+                      :style {:color (if active "yellow" "inherit")}
+                      :on-click action}
+       [:> LightningIcon]]])))
 
 (defn upload-file []
   (timbre/debug "Upload file"))
@@ -87,14 +88,15 @@
     ;; # FIX: @selected should be in argument in case it changed...
     (rf/dispatch [:user/upload (first @selected)(decode-file file)])))
 
-(defn upload-button [{:keys [active]}]
+(defn upload-button [{:keys [active hidden]}]
   ; see upload button example: https://material-ui.com/components/buttons/#contained-buttons
   (timbre/debug "Upload button:" active @selected)
   (let [selected-label (:label (first @selected))
         tooltip (if selected-label
                   (str "Upload " selected-label)
                   "Upload Image")]
-    [:div {:style (if-not active {:display "none"})}
+    [:div {:style (if-not active {:display "none"})
+           :hidden (if hidden true)}
      [:input
       {:accept "image/*"
        :hidden true
@@ -109,9 +111,6 @@
          :component "span"}
         [:> UploadIcon]]]]]))
 
-(def signed-in-status (rf/subscribe [:signed-in-status]))
-(def product (rf/subscribe [:product]))
-
 (defn header []
   [:div {:style {:flex-grow 1}}
    [:> mui/AppBar {:position "static"}
@@ -122,6 +121,8 @@
      [:> mui/Typography {:variant "h6"
                          :style {:flex 1}}
       (get @product :name "App")]
-     [upload-button {:active (not (empty? @selected))}]
-     [lightning-button {:active (not @requesting-funds)}]
+     [upload-button {:active (not (empty? @selected))
+                     :hidden (not @signed-in-status)}]
+     [lightning-button {:active (not @requesting-funds)
+                        :hidden (not @signed-in-status)}]
      [user-status-area {:signed-in-status @signed-in-status}]]]])
