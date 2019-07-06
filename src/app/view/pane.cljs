@@ -163,7 +163,7 @@
               :label label
               :feedback feedback}]
             #_[notice feedback #(reset! feedback nil)]])
-         (if true ; edit
+         (if edit
            [:span {:style {:width "1em"}}
             [edit-button]])
          (if (and events @expanded)
