@@ -48,13 +48,13 @@
   (timbre/debug "Authenticated Status Changed:" signed-in-status)
   ; class supposed to be added by script in head of html file
   ; when returning from blockstack:
-  (js/document.documentElement.classList.remove "reloading")
   (case signed-in-status
     true
     (js/document.documentElement.classList.add "authenticated")
     false
     (js/document.documentElement.classList.remove "authenticated")
-    nil))
+    nil)
+  (js/document.documentElement.classList.remove "reloading"))
 
 (defn on-authenticated-changes []
   (authenticated-hook @signed-in-status))
