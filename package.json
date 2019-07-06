@@ -1,6 +1,6 @@
 {
   "name": "Person8",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Based on template for shadow-cljs and reagent projects",
   "repository": {
     "type": "git",
