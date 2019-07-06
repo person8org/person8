@@ -110,15 +110,21 @@
                   :height "100%"}}
       [drop-zone-area {:item item}]]])
 
-(defn profile-card [{:keys [id label description edit share image expandable text events]
-                     :as item}]
+(defn profile-card [{{:keys [id label description edit share
+                             image expandable text events] :as item} :item
+                     default-expanded :default-expanded
+                     :as props}]
   (let [content (if image {:media image}{:text text})
         feedback (atom nil)
         expanded (atom false)]
-   (fn [{:keys [label description edit share image expandable text events]
-          :as item}]
-    [ui/card {:style {:width "100%"}}
+    (fn [{{:keys [id label description edit share
+                  image expandable text events] :as item} :item
+          default-expanded :default-expanded
+          :as props}])
+    [ui/card {:style {:width "100%"
+                      :max-height "50vh"}}
      [:> mui/ExpansionPanel
+      {:default-expanded default-expanded}
       [:> mui/ExpansionPanelSummary
        {:expand-icon (-> [:> ExpandIcon]
                          reagent/as-element)}
@@ -156,15 +162,15 @@
               :label label
               :feedback feedback}]
             #_[notice feedback #(reset! feedback nil)]])
-         (if edit
+         (if true ; edit
            [:span {:style {:width "1em"}}
             [edit-button]])
          (if (and events @expanded)
-           [events-list {:events events}])])]]])))
+           [events-list {:events events}])])]]]))
 
-(defn view [{:keys [item]}]
+(defn view [{:keys [item] :as props}]
   [drop-zone {:item item
               :style {:width "100%"}}
     [pick-zone {:item item
                 :style {:width "100%"}}
-      [profile-card item]]])
+     [profile-card props]]])

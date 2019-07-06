@@ -2,6 +2,8 @@
   (:require
     [taoensso.timbre :as timbre]
     ["@material-ui/core" :as mui]
+    ["@material-ui/core/styles" :as styles
+     :refer [makeStyles]]
     ["@material-ui/icons/FileCopy" :default CopyIcon]
     ["@material-ui/core/Grid" :default Grid]
     ["@material-ui/core/Hidden" :default Hidden]
@@ -22,20 +24,37 @@
    (into
     [:> mui/List
      [invoice-view/funding-request-card]]
-    (for [{:keys [selected] :as item} items]
+    (for [{:keys [id selected] :as item} items]
+       ^{:key id}
        [:> mui/ListItem
         {:selected (boolean selected)}
         [pane/view {:item item}]])))
+
+#_
+(timbre/debug "->" styles/makeStyles makeStyles)
+
+#_
+(defn mui-styles [f]
+  (styles/makeStyles (fn [theme] (clj->js (f theme)))))
+
+#_
+(def use-styles (mui-styles (fn [theme]
+                              {:card {:padding (.spacing theme 2)}})))
+#_
+(def classes (styles))
 
 (defn board-grid [{:keys [items]}]
   (into
    [:> Grid {:container true :spacing 8}
      [:> Grid {:item true :xs 12}
        [invoice-view/funding-request-card]]
-    (for [{:keys [selected] :as item} items]
+    (for [{:keys [id selected] :as item} items]
+      ^{:key id}
       [:> Grid {:item true :xs 12 :sm 6 :md 4}
         #_{:selected (boolean selected)}
-        [pane/view {:item item}]])]))
+        [pane/view
+         {:item item
+          :default-expanded true}]])]))
 
 (defn board-pane [items]
   (timbre/debug "Board Pane:" items)
