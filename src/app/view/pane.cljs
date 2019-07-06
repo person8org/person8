@@ -16,7 +16,7 @@
    ["@material-ui/icons/AssignmentLate" :default NoDocIcon]
    ["@material-ui/icons/Edit" :default image-edit]
    ["material-ui-dropzone"
-    :refer [DropzoneArea DropzoneDialog]]
+       :refer [DropzoneArea]]
    [cljs-drag-n-drop.core :as dnd]
    [app.lib.reagent-mui :as ui]
    [goog.string :as gstring]
@@ -70,8 +70,9 @@
 (defn edit-button []
   [ui/raised-button
    {:label ""
-    :label-position "before"
-    :icon (image-edit)}])
+    :labelposition "before"
+    :icon (image-edit)}
+   "Edit"])
 
 (defn events-list [{events :events}]
     (into [ui/list

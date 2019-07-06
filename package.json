@@ -20,17 +20,17 @@
     "clean-win": "rmdir /s /q public/js & rmdir /s /q target"
   },
   "dependencies": {
-    "@material-ui/core": "3.8.1",
-    "@material-ui/icons": "3.0.1",
+    "@material-ui/core": "3.9.3",
+    "@material-ui/icons": "3.0.2",
     "blockstack": "19.2.1",
     "bolt11": "^1.2.5",
     "create-react-class": "~15.6.3",
+    "isarray": "^2.0.4",
     "load-styles": "^2.0.0",
-    "material-ui-dropzone": "^2.3.5",
-    "react": "~16.5.2",
-    "react-dom": "~16.5.2",
-    "react-router-dom": "^4.3.1",
-    "triplesec": "^4.0.3"
+    "material-ui-dropzone": "~2.4.0",
+    "react": "~16.8.1",
+    "react-dom": "~16.8.1",
+    "triplesec": "^3.0.26"
   },
   "devDependencies": {
     "@babel/cli": "~7.4.4",
