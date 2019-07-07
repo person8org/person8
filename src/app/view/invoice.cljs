@@ -11,8 +11,6 @@
    [app.lib.reagent-mui :as ui]
    [app.view.share :as share-view]))
 
-(def requesting-funds (rf/subscribe [:requesting-funds]))
-
 (defn amount-field [{:keys [value]}]
   [:<>
    [:> mui/InputLabel
@@ -86,7 +84,6 @@
         encoded-invoice (reagent/atom invoice-template-encoded)]
     (fn []
       (let [content {:text (str @memo "\n" @encoded-invoice)}]
-        (if @requesting-funds
          [ui/list-item
           [ui/card
            [ui/card-header
@@ -109,4 +106,4 @@
               {:id "payment-request"
                :content content
                :label "request for funds"
-               :feedback feedback}]]]]])))))
+               :feedback feedback}]]]]]))))

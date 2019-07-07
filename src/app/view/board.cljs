@@ -21,14 +21,14 @@
                   (if stage [@stage])))
 
 (defn board-listing [{:keys [items]}]
-   (into
-    [:> mui/List
-     [invoice-view/funding-request-card]]
+  (timbre/debug "Show as list")
+  (into
+    [:> mui/List]
     (for [{:keys [id selected] :as item} items]
        ^{:key id}
        [:> mui/ListItem
         {:selected (boolean selected)}
-        [pane/view {:item item}]])))
+        [pane/profile-panel {:item item}]])))
 
 #_
 (timbre/debug "->" styles/makeStyles makeStyles)
@@ -44,25 +44,31 @@
 (def classes (styles))
 
 (defn board-grid [{:keys [items]}]
+  (timbre/debug "Show as grid")
   (into
-   [:> Grid {:container true :spacing 8}
-     [:> Grid {:item true :xs 12}
-       [invoice-view/funding-request-card]]
-    (for [{:keys [id selected] :as item} items]
+   [:> Grid {:container true :spacing 8}]
+   (for [{:keys [id selected] :as item} items]
       ^{:key id}
       [:> Grid {:item true :xs 12 :sm 6 :md 4}
         #_{:selected (boolean selected)}
-        [pane/view
-         {:item item
-          :default-expanded true}]])]))
+       [pane/pick-zone {:item item
+                        :style {:width "100%"}}
+        [pane/profile-card {:item item}]]])))
+
+(def requesting-funds (rf/subscribe [:requesting-funds]))
 
 (defn board-pane [items]
-  (timbre/debug "Board Pane:" items)
-  [:<>
-   [:> mui/Hidden {:sm-up true}
-    [board-listing {:items items}]]
-   [:> mui/Hidden {:xs-down true}
-    [board-grid {:items items}]]])
+  (let [on-dialog-close #(rf/dispatch [:request-funds false])]
+    (fn [items]
+      (timbre/debug "Board Pane:" items)
+      [:<>
+       [:> mui/Dialog {:open @requesting-funds
+                       :on-close on-dialog-close}
+        [invoice-view/funding-request-card]]
+       [:> mui/Hidden {:sm-up true}
+        [board-listing {:items items}]]
+       [:> mui/Hidden {:xs-down true}
+        [board-grid {:items items}]]])))
 
 (defmethod pane :default [{:keys [mobile profile] :as session}]
   [board-pane (:fields @profile)])

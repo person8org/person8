@@ -89,7 +89,7 @@
           (fn [li]
             (if (= id (:id li))
               (do
-                (timbre/debug "Update selected:" li)
+                (timbre/debug "Update:" li)
                 (apply f li args))
               li))
           board)))
@@ -130,7 +130,7 @@
  :user/drop
  [(log-event)]
  (fn [{{:keys [user-session] :as db} :db :as  fx}
-      [_ {:keys [id] :as item}{:keys [url data] :as file}]]
+      [_ {:keys [id] :as item} {:keys [url data] :as file}]]
    (let [path (str (random-uuid))]
      {:store/store-image {:user-session user-session :path path :data data}
       :db (update-board db id assoc :image url :path path)})))
