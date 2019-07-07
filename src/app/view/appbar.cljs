@@ -12,7 +12,7 @@
     :refer [makeStyles]]
    [re-frame.core :as rf]
    [reagent.core :as reagent]
-   [app.drop
+   [app.lib.drop
     :refer [decode-file]]))
 
 (def debug (rf/subscribe [:debug]))

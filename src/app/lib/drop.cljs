@@ -1,4 +1,4 @@
-(ns app.drop
+(ns app.lib.drop
   (:require
     [taoensso.timbre :as timbre]
     [re-frame.core :as rf]
@@ -57,3 +57,28 @@
 (defstate drop-target
   :start (enable-drop)
   :stop (disable-drop))
+
+#_ ; replaced by DropzoneArea, kept for reference
+(defn drop-zone [{:keys [item]} & children]
+  ;; consider instead using https://www.npmjs.com/package/material-ui-dropzone
+  (let [unique-key (keyword (str "drop-zone-" (random-uuid)))]
+    (reagent/create-class
+     {:component-did-mount
+      (fn [comp]
+        (timbre/debug "Mount dropzone:" comp)
+        (let [node (reagent/dom-node comp)]
+          (dnd/subscribe!
+           node unique-key
+           {:drop (fn [e files]
+                    (timbre/debug "Drop:" files)
+                    (let [[file] (js->clj (js/Array.from files))]
+                      (rf/dispatch [:user/drop item (decode-file file)])))})))
+      :component-will-unmount
+      (fn [comp]
+        (timbre/debug "Unmount dropzone:" comp)
+        (let [node (reagent/dom-node comp)]
+          (dnd/unsubscribe! node unique-key)))
+      :reagent-render
+      (fn [{:keys [item]} & children]
+        ;; Bug: Not updating item if changed
+        (into [:<>] children))})))

@@ -20,36 +20,12 @@
    [cljs-drag-n-drop.core :as dnd]
    [app.lib.reagent-mui :as ui]
    [goog.string :as gstring]
-   [app.drop
+   [app.lib.drop
     :refer [decode-file]]
    [app.view.share :as share-view
     :refer [share-option]]))
 
 (def drag-status (rf/subscribe [:drag]))
-
-(defn drop-zone [{:keys [item]} & children]
-  ;; consider instead using https://www.npmjs.com/package/material-ui-dropzone
-  (let [unique-key (keyword (str "drop-zone-" (random-uuid)))]
-    (reagent/create-class
-     {:component-did-mount
-      (fn [comp]
-        (timbre/debug "Mount dropzone:" comp)
-        (let [node (reagent/dom-node comp)]
-          (dnd/subscribe!
-           node unique-key
-           {:drop (fn [e files]
-                    (timbre/debug "Drop:" files)
-                    (let [[file] (js->clj (js/Array.from files))]
-                      (rf/dispatch [:user/drop item (decode-file file)])))})))
-      :component-will-unmount
-      (fn [comp]
-        (timbre/debug "Unmount dropzone:" comp)
-        (let [node (reagent/dom-node comp)]
-          (dnd/unsubscribe! node unique-key)))
-      :reagent-render
-      (fn [{:keys [item]} & children]
-        ;; Bug: Not updating item if changed
-        (into [:<>] children))})))
 
 (defn pick-zone [{:keys [item] :as props} & children]
   (let [on-click #(rf/dispatch [:select item])]
@@ -84,18 +60,15 @@
 
 (defn on-drop-fn [{:keys [item]}]
   (fn [file]
-    ; this.state.fileObjects
-    (let [current (reagent.core/current-component)]
-      (this-as this
-               (timbre/info "Dropzone file:" file (js-keys this) current #_(.. this -state -fileObjects))
-               (rf/dispatch [:user/drop item (decode-file (js->clj file))])))))
+    (timbre/info "Drop file:" (:id item) (.-name file))
+    (rf/dispatch [:user/drop item (decode-file file)])))
 
 (defn drop-zone-area [{:keys [item]}]
   [:> DropzoneArea
    {:accepted-files #js["image/*"]
     :files-limit 1
     :show-previews-in-dropzone false
-    :drop-zone-class "dropzone-area"
+    :dropzone-class "dropzone-area"
     :on-change #(timbre/debug "Change in dropzone")
     :on-drop (on-drop-fn {:item item})}])
 
@@ -108,70 +81,121 @@
    [:div {:class-name (if show-dropzone "show-dropzone")
           :style {:position "absolute"
                   :top 0
+                  :width "100%"
                   :height "100%"}}
       [drop-zone-area {:item item}]]])
 
 (defn profile-card [{{:keys [id label description edit share
                              image expandable text events] :as item} :item
-                     default-expanded :default-expanded
                      :as props}]
   (let [content (if image {:media image}{:text text})
         feedback (atom nil)
         expanded (atom false)]
     (fn [{{:keys [id label description edit share
                   image expandable text events] :as item} :item
-          default-expanded :default-expanded
-          :as props}])
-    [ui/card {:style {:width "100%"
-                      :max-height "50vh"}}
-     [:> mui/ExpansionPanel
-      {:default-expanded default-expanded}
-      [:> mui/ExpansionPanelSummary
-       {:expand-icon (-> [:> ExpandIcon]
-                         reagent/as-element)}
-       [ui/card-header
-        {:title (reagent/as-element
-                 [:span label
-                        (if events
-                          [ui/badge {:badge-content (str (count events))
-                                     :badge-style {:top "20px"}
-                                     :secondary true}])])
-         :subheader description
-         :avatar (-> [:> mui/Avatar
-                      (if image
-                        [:> DocIcon]
-                        [:> NoDocIcon])]
-                     reagent/as-element)}]]
-      [ui/expansion-panel-details
-        [ui/card-content
-         {:style {:width "100%"}}
+          :as props}]
+      (timbre/debug "For larger display")
+      [ui/card {:style {:width "100%"
+                        :max-height "50vh"}}
+         [ui/card-header
+          {:title (reagent/as-element
+                   [:span label
+                    (if events
+                      [ui/badge {:badge-content (str (count events))
+                                 :badge-style {:top "20px"}
+                                 :secondary true}])])
+           :subheader description
+           :avatar (-> [:> mui/Avatar
+                        (if image
+                          [:> DocIcon]
+                          [:> NoDocIcon])]
+                       reagent/as-element)}]
+         [ui/card-content
+          {:style {:width "100%" :height "auto"}}
+          (if image
+            [card-image-slot
+             {:item item
+              :show-dropzone (contains? #{:start :enter} @drag-status)
+              :image image}])]
          (if image
-           [card-image-slot
-            {:item item
-             :show-dropzone (contains? #{:start :enter} @drag-status)
-             :image image}])]
-       (if image
-        [ui/card-actions
-         (if (and share true)
-           [:div {:style {;:display "flex"
-                          ;:justify-content "flex-end"
-                          ;:width "100%"
-                          :padding 0}}
-            [share-option
-             {:id id
-              :content content
-              :label label
-              :feedback feedback}]
-            #_[notice feedback #(reset! feedback nil)]])
-         (if edit
-           [:span {:style {:width "1em"}}
-            [edit-button]])
-         (if (and events @expanded)
-           [events-list {:events events}])])]]]))
+           [ui/card-actions
+            (if (and share true)
+              [:div {:style {;:display "flex"
+                             ;:justify-content "flex-end"
+                             ;:width "100%"
+                             :padding 0}}
+               [share-option
+                {:id id
+                 :content content
+                 :label label
+                 :feedback feedback}]
+               #_[notice feedback #(reset! feedback nil)]])
+            (if edit
+              [:span {:style {:width "1em"}}
+               [edit-button]])
+            (if (and events @expanded)
+              [events-list {:events events}])])])))
 
+
+(defn profile-panel [{{:keys [id label description edit share
+                              image expandable text events :as item]}
+                      :item
+                      :as props}]
+  (timbre/debug "For mobile display or reduced width")
+  (let [content (if image {:media image}{:text text})
+        feedback (atom nil)
+        expanded (atom false)]
+    (fn [{{:keys [id label description edit share
+                  image expandable text events] :as item} :item
+          :as props}]
+      [ui/card {:style {:width "100%"}}
+       [ui/expansion-panel
+        {:default-expanded false}
+        [:> mui/ExpansionPanelSummary ; can't use ui/expansion-panel-summary
+         {:expand-icon (-> [:> ExpandIcon]
+                           reagent/as-element)}
+         [ui/card-header
+          {:title (reagent/as-element
+                   [:span label
+                    (if events
+                      [ui/badge {:badge-content (str (count events))
+                                 :badge-style {:top "20px"}
+                                 :secondary true}])])
+           :subheader description
+           :avatar (-> [:> mui/Avatar
+                        (if image
+                          [:> DocIcon]
+                          [:> NoDocIcon])]
+                       reagent/as-element)}]]
+        [ui/expansion-panel-details
+         [ui/card-content
+          {:style {:width "100%"}}
+          (if image
+            [card-image-slot
+             {:item item
+              :show-dropzone (contains? #{:start :enter} @drag-status)
+              :image image}])]
+         (if image
+           [ui/card-actions
+            (if (and share true)
+              [:div {:style {;:display "flex"
+                             ;:justify-content "flex-end"
+                             ;:width "100%"
+                             :padding 0}}
+               [share-option
+                {:id id
+                 :content content
+                 :label label
+                 :feedback feedback}]
+               #_[notice feedback #(reset! feedback nil)]])
+            (if edit
+              [:span {:style {:width "1em"}}
+               [edit-button]])
+            (if (and events @expanded)
+              [events-list {:events events}])])]]])))
+
+#_
 (defn view [{:keys [item] :as props}]
-  [drop-zone {:item item
-              :style {:width "100%"}}
     [pick-zone {:item item
                 :style {:width "100%"}}
-     [profile-card props]]])
+     [profile-card props]])

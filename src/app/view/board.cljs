@@ -21,14 +21,15 @@
                   (if stage [@stage])))
 
 (defn board-listing [{:keys [items]}]
-   (into
+  (timbre/debug "Show as list")
+  (into
     [:> mui/List
      [invoice-view/funding-request-card]]
     (for [{:keys [id selected] :as item} items]
        ^{:key id}
        [:> mui/ListItem
         {:selected (boolean selected)}
-        [pane/view {:item item}]])))
+        [pane/profile-panel {:item item}]])))
 
 #_
 (timbre/debug "->" styles/makeStyles makeStyles)
@@ -44,17 +45,18 @@
 (def classes (styles))
 
 (defn board-grid [{:keys [items]}]
+  (timbre/debug "Show as grid")
   (into
    [:> Grid {:container true :spacing 8}
      [:> Grid {:item true :xs 12}
-       [invoice-view/funding-request-card]]
-    (for [{:keys [id selected] :as item} items]
+       [invoice-view/funding-request-card]]]
+   (for [{:keys [id selected] :as item} items]
       ^{:key id}
       [:> Grid {:item true :xs 12 :sm 6 :md 4}
         #_{:selected (boolean selected)}
-        [pane/view
-         {:item item
-          :default-expanded true}]])]))
+       [pane/pick-zone {:item item
+                        :style {:width "100%"}}
+        [pane/profile-card {:item item}]]])))
 
 (defn board-pane [items]
   (timbre/debug "Board Pane:" items)

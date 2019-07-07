@@ -29,6 +29,12 @@
 (defn card-content [& props]
   (into [:> mui/CardContent] props))
 
+(defn expansion-panel [& props]
+  (into [:> mui/ExpansionPanel] props))
+
+(defn expansion-panel-summary [& props]
+  (into [:> mui/ExpansionPanelSummary] props))
+
 (defn expansion-panel-details [& props]
   (into [:> mui/ExpansionPanelDetails] props))
 
