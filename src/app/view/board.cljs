@@ -38,7 +38,6 @@
           (into [:<>] children)
           [:div.error-boundary]))})))
 
-
 (defn board-listing [{:keys [items]}]
   (timbre/debug "Show as list")
   (into
@@ -49,29 +48,30 @@
         {:selected (boolean selected)}
         [pane/profile-panel {:item item}]])))
 
-(timbre/debug "->" styles/makeStyles makeStyles)
-
 (defn mui-styles [f]
   (styles/makeStyles (fn [theme] (clj->js (f theme)))))
 
+#_
 (def use-styles (mui-styles (fn [theme]
-                              {:canvas {:padding (.spacing theme 1)}})))
+                              {:grid-bg {:padding (.spacing theme 1)}})))
 
+#_
 (defn Canvas [props extra]
   ;; React function component aka hook - Can't use Ratoms here!
   (let [; [count set-count] (react/useState 0)
         classes (use-styles)]
-    (timbre/debug "Canvas with class name:" (.-canvas classes))
+    (timbre/debug "Canvas with class name:" (.-grid-bg classes))
     (reagent/as-element
-     [:div {:class-name (.-canvas classes)}
+     [:div {:class-name (.-grid-bg classes)}
        (.-children props)])))
 
+#_
 (def canvas (reagent/adapt-react-class Canvas))
 
 (defn board-grid [{:keys [items]}]
   (timbre/debug "Show as grid" #_(js-keys classes))
   [:div #_{:class-name (.-canvas classes)}
-     [canvas {}
+     [:div ; canvas {}
          (into
           [:> Grid {:container true :spacing 1}]
           (for [{:keys [id selected] :as item} items]

@@ -16,8 +16,6 @@
    [app.view.board
     :refer [board-pane]]))
 
-;; https://v3-8-0.material-ui.com/
-
 (defn header-theme []
   (createMuiTheme
    (clj->js
@@ -30,6 +28,7 @@
   (createMuiTheme
    (clj->js
     {:palette {:type "dark"}
+               ; :primary-text-color colors/white}
                ; :background (aget colors/blueGrey "700")
      :typography {:useNextVariants true}})))
 
@@ -73,10 +72,10 @@
 
 (defn app []
   [:<>
-   [:> mui/CssBaseline]
    [:> mui-ThemeProvider
     {:theme (header-theme)}
     [header]]
    [:> mui-ThemeProvider
     {:theme (custom-theme)}
-    [page {:open (boolean @signed-in-status)}]]])
+    [:> mui/CssBaseline ;; Use with care, sets css on body which may affect landing page
+      [page {:open (boolean @signed-in-status)}]]]])
