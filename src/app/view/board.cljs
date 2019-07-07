@@ -51,27 +51,23 @@
 (defn mui-styles [f]
   (styles/makeStyles (fn [theme] (clj->js (f theme)))))
 
-#_
 (def use-styles (mui-styles (fn [theme]
                               {:grid-bg {:padding (.spacing theme 1)}})))
 
-#_
 (defn Canvas [props extra]
   ;; React function component aka hook - Can't use Ratoms here!
   (let [; [count set-count] (react/useState 0)
-        classes (use-styles)]
-    (timbre/debug "Canvas with class name:" (.-grid-bg classes))
+        classes (js->clj (use-styles) :keywordize-keys true)]
+    (timbre/debug "Canvas with class name:" classes)
     (reagent/as-element
-     [:div {:class-name (.-grid-bg classes)}
+     [:div {:class-name (:grid-bg classes)}
        (.-children props)])))
 
-#_
 (def canvas (reagent/adapt-react-class Canvas))
 
 (defn board-grid [{:keys [items]}]
   (timbre/debug "Show as grid" #_(js-keys classes))
-  [:div #_{:class-name (.-canvas classes)}
-     [:div ; canvas {}
+  [canvas {}
          (into
           [:> Grid {:container true :spacing 1}]
           (for [{:keys [id selected] :as item} items]
@@ -80,8 +76,9 @@
              #_{:selected (boolean selected)}
              [error-boundary {}
               [pane/pick-zone {:item item
-                               :style {:width "100%"}}
-               [pane/profile-card {:item item}]]]]))]])
+                               :style {:width "100%"
+                                       :height "100%"}}
+               [pane/profile-card {:item item}]]]]))])
 
 (def requesting-funds (rf/subscribe [:requesting-funds]))
 

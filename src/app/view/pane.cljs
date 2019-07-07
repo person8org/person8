@@ -96,6 +96,7 @@
           :as props}]
       (timbre/debug "For larger display")
       [ui/card {:style {:width "100%"
+                        :height "100%"
                         :max-height "50vh"}}
          [ui/card-header
           {:title (reagent/as-element
