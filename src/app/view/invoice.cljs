@@ -5,11 +5,17 @@
    ["@material-ui/icons/FlashOn" :default MoneyIcon]
    ["@material-ui/icons/OfflineBolt" :default LightningIcon]
    ["@material-ui/icons/EnhancedEncryption" :default EncryptIcon]
-   ["bolt11" :as bolt11]
+   ["qrcode.react" :as QRCode]
+   [app.lib.bolt11 :as bolt11]
    [re-frame.core :as rf]
    [reagent.core :as reagent]
    [app.lib.reagent-mui :as ui]
    [app.view.share :as share-view]))
+
+(defn on-change-fn [value-var]
+  (fn [e]
+    (let [value (.. e -target -value)]
+      (reset! value-var value))))
 
 (defn amount-field [{:keys [value]}]
   [:<>
@@ -20,8 +26,7 @@
     {:id "input-amount"
      :value @value
      :fullWidth true
-     :on-change (fn [e]
-                  (reset! value (.. e -target -value)))
+     :on-change (on-change-fn value)
      :endAdornment
      (reagent/as-element
       [:> mui/InputAdornment {:position "end"} "SAT"])}]])
@@ -31,79 +36,124 @@
     {:label "Memo"
      :value @value
      :fullWidth true
+     :multiline true
      :margin "normal"
-     :on-change (fn [e]
-                  (reset! value (.. e -target -value)))}])
+     :on-change (on-change-fn value)}])
 
-(def default-address "2MvznU28V9Zzi35p9m1aSB4qmvMZQGLVHt8") ; from http://lnd.fun/newinvoice
+(defn encode-invoice [{{:keys [address amount memo payment-hash timestamp]
+                        :as invoice} :invoice
+                       {:keys [private-key]
+                        :as config} :config}]
+  (try
+    (-> {:address @address
+         :amount @amount
+         :memo @memo
+         :payment-hash @payment-hash
+         :timestamp @timestamp}
+        (bolt11/encode-invoice)
+        (bolt11/sign @private-key)
+        (.. -paymentRequest))
+    (catch :default e
+      (timbre/warn e))))
 
-(def invoice-template-encoded
-  "lntb1u1pw0eymcpp5lv0peqg97a7a78qrawtlfjpyk5t0859890k76f9yaqx8qm7s2lwqdqcf35hv6twvusx27rsv4h8xetncqzpg664s6xjgkjhf5at0es52p3pfallkfglj3js5332yk53w0jmetma9h69esrlg03wx7ksvll6amt5kzgjx0gn238vazjzm4mer7lpwg7sqma2s7q")
-
-(def invoice-template-decoded-js
-  (memoize
-   (fn []
-     (bolt11/decode invoice-template-encoded))))
-
-(defn encode-invoice [{:keys [address amount memo timestamp]}]
-  ; https://www.npmjs.com/package/bolt11
-  (bolt11/encode
-   (js/Object.assign
-    #js{}
-    #js{:coinType "testnet"
-        :address @address
-        :satoshis @amount
-        :description @memo
-        :timestamp @timestamp}
-    (invoice-template-decoded-js))))
-
-#_
-(encode-invoice { :address (reagent/atom default-address)
-                  :amount (reagent/atom 200)
-                  :memo (reagent/atom "Need funds asap")
-                  :timestamp (reagent/atom (js/Date.now))})
-
-(defn hash-field [{:as invoice}]
-  (case :empty
+(defn invoice-area
+  [{{:keys [address amount memo payment-hash timestamp]
+     :as invoice} :invoice
+    {:keys [private-key]
+     :as config} :config}]
+  (case :bolt11
     :bolt11
-    (let [hash (reagent.ratom/make-reaction
-                #(try (encode-invoice invoice)))]
-      [:div @hash])
+    (let [hash (reagent/track! #(encode-invoice {:invoice invoice
+                                                 :config config}))]
+        [:div {:style {:word-break "break-all"}}
+          @hash])
     :table
     (->> invoice
          (map (fn [[k v]] [:div (name k) ":" (deref v)]))
          (into [:div]))
     :empty [:div]))
 
+(defn qrcode-area [{:keys [invoice config]}]
+  (let [hash (reagent/track! #(-> {:invoice invoice :config config}
+                                  (encode-invoice)))]
+    [:> QRCode {:value @hash
+                :style {:width "auto" :height "100%"}}]))
+
+
+(defn show-button [{:keys [value]}]
+  [:> mui/FormControlLabel
+   {:control
+    (->
+     [:> mui/Switch
+      {:value @value
+       :on-change (fn [e v](reset! value v))}]
+     (reagent/as-element))
+    :label "Review Lightning Settings"}])
+
+(defn payment-hash-field [{:keys [value]}]
+  [:> mui/TextField
+   {:label "Payment Hash"
+    :value @value
+    :fullWidth true
+    :margin "normal"
+    :on-change (on-change-fn value)}])
+
+(defn private-key-field [{:keys [value]}]
+  [:> mui/TextField
+   {:label "Private Key"
+    :value @value
+    :fullWidth true
+    :margin "normal"
+    :on-change (on-change-fn value)}])
+
+
 (defn funding-request-card []
-  (let [address (reagent/atom default-address)
+  (let [address (reagent/atom bolt11/default-address)
         amount (reagent/atom "")
         memo (reagent/atom "")
+        payment-hash (reagent/atom bolt11/test-payment-hash)
         timestamp (reagent/atom (js/Date.now))
+        invoice {:address address
+                 :amount amount
+                 :memo memo
+                 :payment-hash payment-hash
+                 :timestamp timestamp}
+        shown (reagent/atom false)
+        private-key (reagent/atom bolt11/test-private-key)
+        config {:private-key private-key}
         feedback (reagent/atom "Sending funding request!")
-        encoded-invoice (reagent/atom invoice-template-encoded)]
+        encoded-invoice (reagent/atom bolt11/invoice-template-encoded)]
     (fn []
       (let [content {:text (str @memo "\n" @encoded-invoice)}]
-         [ui/list-item
-          [ui/card
+        [ui/card
            [ui/card-header
-            {:title "Payment Request"
+            {:title "Payment Request (experimental)"
              :subheader "Receive funds through the Lightning Network"
              :avatar (-> [:> mui/Avatar
                           [:> LightningIcon
                             {:style {:color "yellow"}}]]
                          reagent/as-element)}]
            [ui/card-content
-            [:> mui/FormControl
-             [amount-field {:value amount}]
-             [memo-field {:value memo}]
-             [hash-field {:address  address
-                          :amount amount
-                          :memo memo
-                          :timestamp timestamp}]]
-            [ui/card-actions
-             [share-view/share-option
-              {:id "payment-request"
-               :content content
-               :label "request for funds"
-               :feedback feedback}]]]]]))))
+            [ui/grid {:container true}
+             [ui/grid {:item true :xs 12 :sm 6}
+               [:> mui/FormControl
+                 [amount-field {:value amount}]
+                 [memo-field {:value memo}]]]
+             [ui/grid {:item true :xs 12 :sm 6}
+              [:div {:style {:margin-left "1em"}}
+                [qrcode-area {:invoice invoice
+                              :config config}]]]]]
+           [ui/card-content
+            [:> mui/Card
+             #_
+             [ui/card-header
+              {:title "Lightning Hash"}]
+             [ui/card-content
+              [invoice-area {:invoice invoice
+                             :config config}]]]]
+           [ui/card-content
+             [show-button {:value shown}]
+             (if @shown
+              [:> mui/FormControl {:full-width true}
+               [payment-hash-field {:value payment-hash}]
+               [private-key-field {:value private-key}]])]]))))

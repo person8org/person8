@@ -10,7 +10,8 @@
    [app.routing]
    [app.lib.drop]
    [app.events]
-   [app.store]))
+   [app.store]
+   [app.lib.lightningcharge]))
 
 (defn mount-root []
   (r/render-component [view/app]

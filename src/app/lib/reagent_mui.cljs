@@ -1,6 +1,7 @@
 (ns app.lib.reagent-mui
   (:refer-clojure :exclude [list])
   (:require
+   [reagent.core :as reagent]
    ["@material-ui/core" :as mui]
    ["@material-ui/icons/FileCopy" :default CopyIcon]))
 
@@ -37,6 +38,8 @@
 
 (defn expansion-panel-details [& props]
   (into [:> mui/ExpansionPanelDetails] props))
+
+(def grid (reagent/adapt-react-class mui/Grid))
 
 (defn list [& props]
   (into [:> mui/List] props))

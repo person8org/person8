@@ -26,8 +26,11 @@
     "bolt11": "^1.2.5",
     "is-plain-object": "^3.0.0",
     "isarray": "^2.0.4",
+    "lightning-charge-client": "0.1.10",
     "load-styles": "^2.0.0",
     "material-ui-dropzone": "^2.4.0",
+    "qrcode": "^1.4.0",
+    "qrcode.react": "^0.9.3",
     "react": "~16.8.1",
     "react-dom": "~16.8.1",
     "triplesec": "^3.0.26"
