@@ -13,13 +13,13 @@
 
 ;; http://api-token:terjenorderhaug@localhost:9112
 
-(def default-endpoint "http://localhost:9112")
+(def default-endpoint #_"http://localhost:9112" "http://127.0.0.1")
 (def api-token "terjenorderhaug")
 
 
 
 (defn fetch-info1 []
-  (go (let [response (<! (http/get "http://api-token:terjenorderhaug@localhost:9112/info"
+  (go (let [response (<! (http/get "http://api-token:terjenorderhaug@127.0.0.1:9112/info"
                                    {:basic-auth {:username "api-token" :password api-token}
                                     :with-credentials? false}))]
         (prn (:status response))
@@ -30,7 +30,7 @@
 
 
 (defn fetch-info-ok [] ;; OK200 from server but fails cors
-  (go (let [response (<! (http/get "http://localhost:9112/info"
+  (go (let [response (<! (http/get "http://127.0.0.1:9112/info"
                                    {:with-credentials? true}))]
         (prn response)
         (timbre/debug "=>" response))))
