@@ -3,12 +3,11 @@
    [cljs.core.async.macros
     :refer [go go-loop]])
   (:require
-   [goog.fs
-    :refer [get-blob get-blob-with-properties]])
-  (:require
    [cljs.core.async :as async
     :refer [<! chan close! alts! timeout put!]]
    [clojure.spec.alpha :as s]
+   [goog.fs
+    :refer [getBlob getBlobWithProperties]]
    [taoensso.timbre :as timbre]
    [app.datatransfer
     :refer [file-as-blob-async]]
@@ -28,7 +27,7 @@
 
 (def data-storage ;; should be in settings
   {:path "v10/data.edn"
-   :options {:decrypt true}
+   :options {:decrypt true} ;; decrypt?
    :spec ::index
    :reader cljs.reader/read-string
    :writer prn-str})
@@ -44,13 +43,14 @@
 (try ;; only for debug, remove in production
   (check-data-storage state/profile-fields)
   (catch :default e
-    (timbre/error e)
+    (timbre/warn e)
     (let [{:keys [spec reader writer]} data-storage]
       (timbre/info state/profile-fields writer reader)
       (timbre/warn (-> state/profile-fields writer reader)))))
 
 ;; PERSISTENT IMAGES
 
+;; Representation of image presumedly stored in a file
 ;; Consider as immutable
 
 (defrecord Image [path url])
@@ -60,13 +60,15 @@
 
 (defn make-image [path filedata]
   ; filedata is string or .ArrayBuffer
+  ; status is an atom representing current save status
   (timbre/debug "make image:" path filedata)
-  (->Image path (if filedata (as-url filedata))))
+  (let [path (or path (str (random-uuid)))]
+    (->Image path (if filedata (as-url filedata)))))
 
 (defn as-blob [data {:keys [type]}]
   (if (some? type)
-    (get-blob-with-properties [data] type)
-    (get-blob data))
+    (getBlobWithProperties [data] type)
+    (getBlob data))
   #_ ; better use goog for compatibility
   (new js/Blob [data] #js{:type type}))
 
@@ -91,19 +93,23 @@
        (file-as-blob-async content collect))
     out))
 
-
-(defn store-image [{:keys [user-session path options]} content]
-  {:post [string?]}
+(defn store-image-data [{:keys [user-session path options]} content]
   ;; should never store on top of existing file
-  (timbre/debug "Store image:" path content)
   (let [out (async/promise-chan)
-        collect #(put! out (->Image path (as-url %)))]
+        collect #(put! out %)]
     (go
      (-> (.putFile user-session path (<!(encode-image content)) (clj->js options))
          (.finally #(collect content))
          (.catch #(do (timbre/error "Failed to store:" %)
                     (close! out)))))
     out))
+
+(defn store-image [{:keys [user-session path options] :as target} content]
+  "Returns an image record, storing the content as a side effect"
+  {:post [#(instance? Image %)]}
+  (timbre/debug "Store image:" path content)
+  (go (<! (store-image-data target content)))
+  (make-image path (as-url content)))
 
 (defn encode-index [content]
   {:post [#(s/valid? ::index %)]}

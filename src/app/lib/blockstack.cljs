@@ -156,7 +156,7 @@
  (fn [{:keys [user-session path content options writer dispatch]
        :or {writer identity}}]
    {:pre [(some? user-session)]}
-   (timbre/debug "Store blockstack file:" path)
+   (timbre/debug "Store blockstack file:" path (writer content))
    (-> (.putFile user-session path (writer content)(clj->js options))
        (.catch #(timbre/error "Failed storing file:" %))
        (.finally (fn [] (if dispatch (dispatch content)))))))

@@ -39,9 +39,7 @@
 
 (defn dispatch-paste [{:as payload}]
   (timbre/debug "Dispatch Paste:" payload)
-  (rf/dispatch [:paste (assoc payload
-                              :id (random-uuid))]))
-
+  (rf/dispatch [:user/paste payload]))
 
 (defn get-as-string [item]
   {:pre [(some? item)]}

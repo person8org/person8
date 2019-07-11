@@ -54,6 +54,7 @@
   (dnd/unsubscribe! js/document.documentElement
                     :unique-key))
 
+#_ ; replaced by drop zones
 (defstate drop-target
   :start (enable-drop)
   :stop (disable-drop))

@@ -94,55 +94,54 @@
               li))
           board)))
 
-(rf/reg-event-db
- :replace-image
- [(log-event "Should replace image:")]
- (fn [db [_ {:keys [id] :as item}
-            {:keys [url] :as file}]]
-   (update-board db id assoc :image url)))
-
 (rf/reg-fx
  :store/store-image
  (fn [{:keys [user-session path data]}]
-   (store/store-image {:user-session user-session :path path} data)
+   (store/store-image-data {:user-session user-session :path path} data)
    nil))
 
+(rf/reg-event-db
+ :replace-image
+ [(log-event)]
+ (fn [db [_ {:keys [id] :as item}
+            {:keys [url] :as file}]]
+   ; replace without storing...
+   (update-board db id assoc :image url)))
+
 (rf/reg-event-fx
- :paste
- [(log-event "Paste:")]
+ ::inject-image
+ [(log-event)]
  (fn [{{:keys [user-session board] :as db} :db :as fx}
-      [_ {:keys [url data path] :as item}]]
+      [_ id {:keys [url data path] :as item}]]
+   (let [path (or path (str (random-uuid)))
+         item (assoc item :path path)]
+     {:store/store-image
+      {:user-session user-session :path path :data data}
+      :db (if id
+            (update-board db id assoc :image url :path path)
+            (update db :board conj item))})))
+
+(rf/reg-event-fx
+ :user/paste
+ [(log-event)]
+ (fn [{{:keys [user-session board] :as db} :db :as fx}
+      [_ {:keys [kind type url data] :as item}]]
    (let [[selected] (filter :selected board)]
-     (timbre/debug "Paste into:" selected)
-     (let [store? (not path)
-           path (or path (str (random-uuid)))
-           item (assoc item :path path)]
-       (assoc fx
-         :store/store-image
-         (when store?
-           {:user-session user-session :path path :data data})
-         :db
-         (if selected
-           (update-board db (:id selected) assoc :image url :path path)
-           (update db :board conj item)))))))
+     {:dispatch [::inject-image (:id selected) item]})))
 
 (rf/reg-event-fx
  :user/drop
  [(log-event)]
  (fn [{{:keys [user-session] :as db} :db :as  fx}
       [_ {:keys [id] :as item} {:keys [url data] :as file}]]
-   (let [path (str (random-uuid))]
-     {:store/store-image {:user-session user-session :path path :data data}
-      :db (update-board db id assoc :image url :path path)})))
+   {:dispatch [::inject-image id file]}))
 
 (rf/reg-event-fx
  :user/upload
  [(log-event)]
  (fn [{{:keys [user-session] :as db} :db :as  fx}
-      [_ {:keys [id] :as item}{:keys [url data] :as file}]]
-   (let [path (str (random-uuid))]
-     {:store/store-image {:user-session user-session :path path :data data}
-      :db (update-board db id assoc :image url :path path)})))
+      [_ {:keys [id] :as item}{:keys [url data] :as image}]]
+   {:dispatch [::inject-image id image]}))
 
 (rf/reg-event-db
  :drag
@@ -175,6 +174,13 @@
  [(log-event)]
  (fn [{:as fx} [_ {:as item}]]
    {:dispatch [:sign-user-in]}))
+
+(rf/reg-event-fx
+ :app/reset
+ [(log-event)]
+ (fn [{:keys [db] :as fx} [_ {:as item}]]
+   {:db (assoc db :board [])
+    :dispatch [:state/store []]}))
 
 (defn change-board-for-demo [items]
   (map
@@ -263,16 +269,19 @@
            :dispatch #(rf/dispatch [:stored %]))}))
 
 
-;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; PERSISTENT DATA OBSERVERS
 
 
 (defonce board-sub (rf/subscribe [:board]))
+
 
 (defn index-subscribe []
    (let [board @board-sub]
      (timbre/debug "Potential board change:" board)
      (if-not (= board state/profile-fields)
        (store/encode-index board))))
+
 
 (defonce index-sub (reagent.ratom/reaction (index-subscribe)))
 
@@ -284,6 +293,7 @@
 (defstate index-sub
   :start (reagent/track! index-subscribe)
   :end (reagent/dispose! index-sub))
+
 
 (defn on-content-change []
   (let [index @index-sub]
@@ -304,7 +314,7 @@
     (timbre/debug "Tracked User Data:" user-data)
     (if (some? user-data)
       (rf/dispatch [:state/load])
-      (timbre/warn "No user data"))))
+      (timbre/warn "Waiting for user data"))))
 
 (defstate user-data-track
   :start (reagent/track! on-user-data-change)

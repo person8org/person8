@@ -13,6 +13,7 @@
     [["/signin" {:name :app/signin}]
      ["/exit" {:name :app/exit}]
      ["/enter" {:name :app/enter}]
+     ["/reset" {:name :app/reset}]
      ["/demo" {:name :app/demo}]])
 
 (rf/reg-fx
