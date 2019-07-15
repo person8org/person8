@@ -117,7 +117,9 @@
             cancel-action #(do (timbre/debug "Close share dialog")
                              (reset! opened false))]
         [:div
+         #_
          [share-button open-action]
+         #_
          [share-dialog {:label label
                         :open @opened
                         :cancel-action cancel-action
