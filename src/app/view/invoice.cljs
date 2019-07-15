@@ -6,6 +6,7 @@
    ["@material-ui/icons/OfflineBolt" :default LightningIcon]
    ["@material-ui/icons/EnhancedEncryption" :default EncryptIcon]
    ["qrcode.react" :as QRCode]
+   [goog.functions]
    [app.lib.bolt11 :as bolt11]
    [re-frame.core :as rf]
    [reagent.core :as reagent]
@@ -16,6 +17,8 @@
   (fn [e]
     (let [value (.. e -target -value)]
       (reset! value-var value))))
+
+(def debounce goog.functions/debounce)
 
 (defn amount-field [{:keys [value]}]
   [:<>
@@ -63,8 +66,9 @@
      :as config} :config}]
   (case :bolt11
     :bolt11
-    (let [hash (reagent/track! #(encode-invoice {:invoice invoice
-                                                 :config config}))]
+    (let [hash (reagent/track! #(-> {:invoice invoice
+                                     :config config}
+                                    (encode-invoice)))]
         [:div {:style {:word-break "break-all"}}
           @hash])
     :table
