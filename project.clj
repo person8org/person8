@@ -12,6 +12,7 @@
                  [re-frame]
                  [metosin/reitit "0.3.9"]
                  [mount "0.1.16"]
+                 ; [buddy/buddy-core "1.6.0"]
                  [cljs-http "0.1.46"]
                  [cljs-drag-n-drop "0.1.0"]]
 

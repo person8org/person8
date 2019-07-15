@@ -5,7 +5,7 @@
     [mount.core :refer [defstate]]
     [cljs-drag-n-drop.core :as dnd]
     [app.datatransfer
-     :refer [dispatch-paste]]
+     :refer [dispatch-payload]]
     [app.lib.url
       :refer [as-url]]))
 
@@ -26,7 +26,7 @@
   (doseq [file files]
     (let [url (as-url file)
           item-type "image/tiff"]
-      (dispatch-paste (decode-file file)))))
+      (dispatch-payload (decode-file file)))))
 
 
 (defn enable-drop []

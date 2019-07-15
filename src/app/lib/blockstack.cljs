@@ -173,5 +173,5 @@
                        (swap! files conj file)
                        #_(timbre/info "File:" file)
                        true))
-         (.then #(timbre/info "Files (" % "):" (clojure.string/join " " @files)))
+         (.then #(timbre/info "Files (" % "):\n" (clojure.string/join "\n" @files)))
          (.catch #(timbre/error "Failed listing files:" %))))))

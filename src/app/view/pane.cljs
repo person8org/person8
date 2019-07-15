@@ -74,7 +74,8 @@
 
 (defn card-image-slot [{:keys [item image show-dropzone]}]
   (timbre/debug "Card image slot:" show-dropzone)
-  [:div {:style {:position "relative"}}
+  [:div {:style {:position "relative"
+                 :overflow "hidden"}}
    [ui/card-media {:style {:height "auto"}
                    :image image
                    :component "img"}]

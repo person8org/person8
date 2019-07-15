@@ -72,7 +72,7 @@
           [:> Grid {:container true :spacing 1}]
           (for [{:keys [id selected] :as item} items]
             ^{:key id}
-            [:> Grid {:item true :xs 12 :sm 6 :md 4}
+           [:> Grid {:item true :xs 12 :sm 6 :md 4}
              #_{:selected (boolean selected)}
              [error-boundary {}
               [pane/pick-zone {:item item

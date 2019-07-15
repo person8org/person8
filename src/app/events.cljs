@@ -22,16 +22,27 @@
                  (timbre/debug (or label "Event:") event)
                  context))))
 
+(defn check-and-throw [a-spec db]
+  (when-not (s/valid? a-spec db)
+    (throw (ex-info (str "spec check failed: " (s/explain-str a-spec db)) {}))))
+
+(s/def ::db (s/keys :req-un [::product ::board]
+                    :opt-un []))
+
+(def validate-db
+  (rf/after (partial check-and-throw ::db)))
 
 (rf/reg-event-db
  :initialize
+ [validate-db]
  (fn [db [_ initial]]
    (timbre/debug "DB:" db)
    (if (empty? db) initial db)))
 
 (rf/reg-event-db
    :pane
-   [(log-event "Change pane:")]
+   [(log-event "Change pane:")
+    validate-db]
    (fn [db [_ mode]]
      (assoc db :pane mode)))
 
@@ -89,59 +100,71 @@
           (fn [li]
             (if (= id (:id li))
               (do
-                (timbre/debug "Update:" li)
+                (timbre/debug "Update:" li " => " (apply f li args))
                 (apply f li args))
               li))
           board)))
 
 (rf/reg-fx
- :store/store-image
- (fn [{:keys [user-session path data]}]
-   (store/store-image-data {:user-session user-session :path path} data)
+ :store/update-image
+ (fn [{:keys [user-session id type data] :as arg}]
+   (let [image {:type type
+                :data data}]
+     (timbre/debug "Update image:" data
+                   (js-keys data))
+     (store/update-image user-session id image))
    nil))
 
 (rf/reg-event-db
  :replace-image
- [(log-event)]
+ [(log-event)
+  validate-db]
  (fn [db [_ {:keys [id] :as item}
-            {:keys [url] :as file}]]
+            {:keys [url path] :as file}]]
    ; replace without storing...
-   (update-board db id assoc :image url)))
+   (update-board db id assoc :image url :path path)))
 
 (rf/reg-event-fx
- ::inject-image
- [(log-event)]
- (fn [{{:keys [user-session board] :as db} :db :as fx}
-      [_ id {:keys [url data path] :as item}]]
-   (let [path (or path (str (random-uuid)))
-         item (assoc item :path path)]
-     {:store/store-image
-      {:user-session user-session :path path :data data}
+ ::update-image
+ [(log-event)
+  validate-db]
+ (fn [{{:keys [user-session user-data board] :as db} :db :as fx}
+      [_ id {:keys [url data type] :as item}]]
+   {:pre [(string? url)]}
+   (let []
+     {:store/update-image
+      {:user-session user-session
+       :id id
+       :type type
+       :data data}
       :db (if id
-            (update-board db id assoc :image url :path path)
-            (update db :board conj item))})))
+            (update-board db id assoc :id id :image url)
+            (update db :board conj {:id (str (random-uuid))
+                                    :image url}))})))
 
 (rf/reg-event-fx
  :user/paste
- [(log-event)]
+ [(log-event)
+  validate-db]
  (fn [{{:keys [user-session board] :as db} :db :as fx}
-      [_ {:keys [kind type url data] :as item}]]
+      [_ payload]]
    (let [[selected] (filter :selected board)]
-     {:dispatch [::inject-image (:id selected) item]})))
+     {:dispatch [::update-image (:id selected) payload]})))
 
 (rf/reg-event-fx
  :user/drop
- [(log-event)]
+ [(log-event)
+  validate-db]
  (fn [{{:keys [user-session] :as db} :db :as  fx}
-      [_ {:keys [id] :as item} {:keys [url data] :as file}]]
-   {:dispatch [::inject-image id file]}))
+      [_ {:keys [id] :as item} payload]]
+   {:dispatch [::update-image id payload]}))
 
 (rf/reg-event-fx
  :user/upload
  [(log-event)]
  (fn [{{:keys [user-session] :as db} :db :as  fx}
-      [_ {:keys [id] :as item}{:keys [url data] :as image}]]
-   {:dispatch [::inject-image id image]}))
+      [_ {:keys [id] :as item} payload]]
+   {:dispatch [::update-image id payload]}))
 
 (rf/reg-event-db
  :drag
@@ -176,11 +199,19 @@
    {:dispatch [:sign-user-in]}))
 
 (rf/reg-event-fx
- :app/reset
- [(log-event)]
+ :app/reset!
+ [(log-event)
+  validate-db]
  (fn [{:keys [db] :as fx} [_ {:as item}]]
    {:db (assoc db :board [])
     :dispatch [:state/store []]}))
+
+(rf/reg-event-fx
+ :app/clear-files!
+ [(log-event)]
+ (fn [{:keys [user-session] :as db} [_]]
+   (store/delete-all-files! user-session)
+   nil))
 
 (defn change-board-for-demo [items]
   (map
@@ -192,7 +223,8 @@
 
 (rf/reg-event-fx
  :app/demo
- [(log-event)]
+ [(log-event)
+  validate-db]
  (fn [{:keys [db] :as fx} [_ {:as item}]]
    {:db
     (update-in db [:board] change-board-for-demo)}))
@@ -212,33 +244,37 @@
 
 (rf/reg-event-db
  :request-funds
- [(log-event)]
+ [(log-event)
+  validate-db]
  (fn [{:as db} [_ status]]
    (assoc db :requesting-funds (if (some? status) status true))))
 
 (rf/reg-event-db
    :state/board
-   [(log-event)]
+   [(log-event)
+    validate-db]
    (fn [{:as db} [_ board]]
      (assoc db :board board)))
 
-(defn call-resolved-images [user-session index dispatch]
-   (dispatch (store/merge-defaults index))
-   (doseq [{:keys [id path] :as entry} index]
-     (go-loop [image (<! (store/load-image {:user-session user-session
-                                            :path path}))]
+(defn resolve-image [user-session {:keys [id image] :as entry}]
+   (timbre/debug "Resolve Image:" entry)
+   (go-loop [image (<! (store/load-image {:user-session user-session
+                                          :path image}))]
        (if-let [url (and image (.-url image))]
          (rf/dispatch [:replace-image {:id id} {:url url}])
-         (timbre/warn "No image loaded for:" path)))))
+         (timbre/warn "No image loaded for:" id))))
 
-(rf/reg-event-fx
-   :state/loaded
-   [(log-event)]
-   (fn [{{:keys [user-session] :as db} :db :as fx}
-        [_ index]]
-     (call-resolved-images user-session index
-                                 #(rf/dispatch [:state/board %]))
-     {}))
+(rf/reg-fx
+ :state/load
+ (fn [{:keys [user-session] :as arg}]
+   (timbre/debug "FX state/load")
+   (let [in (store/load-index user-session)]
+     (go-loop [entry (<! in)]
+       (timbre/info "Loaded:" entry)
+       (when (some? entry)
+         (resolve-image user-session entry)
+         (recur (<! in)))))
+   nil))
 
 (rf/reg-event-fx
  :state/load ;; load all content from files at startup
@@ -246,10 +282,7 @@
  (fn [{{:keys [user-session] :as db} :db :as fx} [_]]
    {:pre [user-session]}
    {:blockstack/list-files {:user-session user-session}
-    :blockstack/load-file
-    (assoc store/data-storage
-            :user-session user-session
-            :dispatch #(rf/dispatch [:state/loaded %]))}))
+    :state/load {:user-session user-session}}))
 
 (rf/reg-event-fx
    :stored
@@ -258,7 +291,7 @@
      {}))
 
 (rf/reg-event-fx
- :state/store
+ :state/store ;; ## moot?
  [(log-event)]
  (fn [{{:keys [user-session] :as db} :db :as fx} [_ index]]
    {:pre [user-session]}
@@ -268,50 +301,13 @@
            :user-session user-session
            :dispatch #(rf/dispatch [:stored %]))}))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; PERSISTENT DATA OBSERVERS
-
-
-(defonce board-sub (rf/subscribe [:board]))
-
-
-(defn index-subscribe []
-   (let [board @board-sub]
-     (timbre/debug "Potential board change:" board)
-     (if-not (= board state/profile-fields)
-       (store/encode-index board))))
-
-
-(defonce index-sub (reagent.ratom/reaction (index-subscribe)))
-
-#_
-(defstate index-sub
-  :start (reagent.ratom/reaction (index-subscribe))
-  :end (reagent/dispose! index-sub))
-#_
-(defstate index-sub
-  :start (reagent/track! index-subscribe)
-  :end (reagent/dispose! index-sub))
-
-
-(defn on-content-change []
-  (let [index @index-sub]
-    (timbre/debug "Potential index change:" index)
-    (when (some? index)
-      (rf/dispatch [:state/store index]))))
-
-(defstate user-content-track
-  :start (reagent/track! on-content-change)
-  :end (reagent/dispose! user-content-track))
-
-;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def user-data-sub (rf/subscribe [:blockstack/user-data]))
 
 (defn on-user-data-change []
   (let [user-data @user-data-sub]
-    (timbre/debug "Tracked User Data:" user-data)
+    #_(timbre/debug "Tracked User Data:" user-data)
     (if (some? user-data)
       (rf/dispatch [:state/load])
       (timbre/warn "Waiting for user data"))))
@@ -320,19 +316,11 @@
   :start (reagent/track! on-user-data-change)
   :end (reagent/dispose! user-data-track))
 
-#_ ; ;; ## not triggered but why?
-(defstate load-user-state
-  :start (reagent/wrap @user-data-sub
-                       #(if (some? %)
-                          (rf/dispatch [:load-user])
-                          (timbre/warn "No user data"))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def initial-db
-  {:product {:name "Person8"}})
+  {:product {:name "Person8"}
+   :board state/profile-fields})
 
-(rf/dispatch [:initialize initial-db])
-
-#_
-(rf/dispatch [:debug true])
+(timbre/info "Initialize state")
+(rf/dispatch-sync [:initialize initial-db])

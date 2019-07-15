@@ -37,10 +37,6 @@
           (.then (fn [response] (put! out response))))
       (timbre/error "Can't put in clipboard:" type))))
 
-(defn dispatch-paste [{:as payload}]
-  (timbre/debug "Dispatch Paste:" payload)
-  (rf/dispatch [:user/paste payload]))
-
 (defn get-as-string [item]
   {:pre [(some? item)]}
   ; https://developer.mozilla.org/en-US/docs/Web/API/DataTransferItem/getAsString
@@ -74,6 +70,13 @@
           #(cb (.-result reader)))
     (.readAsArrayBuffer reader file)))
 
+(defrecord Payload []
+  #_"Data from a transfer, possibly with limited extent")
+
+(defn dispatch-payload [{:as payload}]
+  (timbre/debug "Dispatch Paste:" payload)
+  (rf/dispatch [:user/paste (map->Payload payload)]))
+
 (defn load-datatransfer [transfer]
   ; https://developer.mozilla.org/en-US/docs/Web/API/DataTransferItem
   (let [types (map js->clj (.-types transfer))
@@ -90,30 +93,30 @@
                (some? (.getAsFile item)))
           (let [file (.getAsFile item) ;; don't do in async as it may no longer exist
                 url (as-url file)]
-              (dispatch-paste {:kind item-kind
-                               :type item-type
-                               :data file
-                               :url  url}))
+              (dispatch-payload {:kind item-kind
+                                 :type item-type
+                                 :data file
+                                 :url  url}))
 
           (or (= item-type "text/plain")
               (= item-type "string"))
           (let [in (get-as-string item)]
             (go-loop [data (<! in)]
-              (dispatch-paste {:type item-type
-                               :data data})))
+              (dispatch-payload {:type item-type
+                                 :data data})))
 
           (= item-type "text/html")
-          (dispatch-paste {:type item-type
-                           :data (.getData transfer item-type)})
+          (dispatch-payload {:type item-type
+                             :data (.getData transfer item-type)})
 
           (= item-type "image/png")
           (let [clip (.getData transfer item-type)]
             (if-not (empty? clip) ;; empty string when no value per spec
               (let [_ (timbre/debug "->" clip (type clip)(some? clip))
                     url nil]
-                (dispatch-paste {:type item-type
-                                 :data clip
-                                 :url url}))
+                (dispatch-payload {:type item-type
+                                   :data clip
+                                   :url url}))
               (timbre/warn "No clip content for type:" item-type)))
 
           true ;; images etc
@@ -132,8 +135,8 @@
       (-> text
           (.then (fn [text]
                    (timbre/info "Pasted:" text)
-                   (dispatch-paste {:type "text/plain"
-                                    :data text})))))))
+                   (dispatch-payload {:type "text/plain"
+                                      :data text})))))))
 
 (defstate paste-target
   :start (.addEventListener js/document goog.events.EventType.PASTE
