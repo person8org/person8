@@ -53,7 +53,8 @@
     false
     (js/document.documentElement.classList.remove "authenticated")
     nil)
-  (js/document.documentElement.classList.remove "reloading"))
+  (when (some? signed-in-status)
+    (js/document.documentElement.classList.remove "reloading")))
 
 (defn on-authenticated-changes []
   (authenticated-hook @signed-in-status))
@@ -63,12 +64,13 @@
   :end (reagent/dispose! authenticated-track))
 
 (defn page [{:keys [open]}]
-  [:div (if-not open {:style {:display "none"}})
-   [:div {:style {:background-color (aget colors/blueGrey "700")}}
+  [:div.page 
+    {:style {:display (if-not open "none")
+             :background-color (aget colors/blueGrey "700")}}
     (case (if @debug (or @pane :default) :default)
       :profile [dev/user-profile-card {:user-data user-data}]
       :state [dev/state-inspector]
-      :default [board-pane (or @board-items)])]])
+      :default [board-pane (or @board-items)])])
 
 (defn app []
   [:<>
