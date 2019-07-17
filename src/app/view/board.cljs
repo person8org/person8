@@ -73,7 +73,7 @@
           (for [{:keys [id selected] :as item} items]
             ^{:key id}
            [:> Grid {:item true :xs 12 :sm 6 :md 4
-                     :classes {:root ["board-grid-item"]}}
+                     :classes {:root "board-grid-item"}}
              #_{:selected (boolean selected)}
              [error-boundary {}
               [entry/pick-zone {:item item

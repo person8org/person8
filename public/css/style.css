@@ -12,7 +12,10 @@ body {
 }
 
 .form-auth {
-  display: inline-block;
+}
+
+.form-auth .btn {
+  width: 100%;
 }
 
 .form-signin, .form-register {
@@ -28,7 +31,6 @@ body {
   background-repeat: no-repeat;
   background-size: auto 100%;
   padding-left: 3em;
-  width: 100%;
 }
 
 .form-register .btn {
@@ -37,11 +39,34 @@ body {
   background-repeat: no-repeat;
   background-size: auto 80%;
   padding-left: 3em;
-  width: 100%;
+}
+
+.ph-button {
+  margin-left: 1em;
+  display: inline-block;
+  width: 250px;
+  height: 54px;
+  background-color: #0069d9;
+  border-radius: 11px;
+}
+
+.ph-button:hover {
+  background-color: #0089e9;
+}
+
+.ph-button img {
+  width: 250px;
+  height: 54px;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.ph-button img:hover {
+  opacity: 0.7;
 }
 
 .slidedeck {
   padding-top: 81%;
+  background-color: #444;
 }
 
 .slidedeck iframe {
