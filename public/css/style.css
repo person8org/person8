@@ -11,10 +11,19 @@ body {
 }
 
 .form-signin {
-  margin: auto;
-  width: 50%;
-  /* border: 3px solid green; */
-  padding: 10px;
+
+}
+
+.form-signin .btn-primary:not(:hover) {
+  background-color: rgb(31,31,109);
+}
+
+.signin-button {
+  background-image: url(https://pbs.twimg.com/profile_images/1099073690065547265/0T4PyCGk_400x400.png);
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  padding-left: 3em;
+  margin-right: 0.5em;
 }
 
 /* Initial Loading */
@@ -43,6 +52,8 @@ body {
 .authenticated .landing {
   display: none;
 }
+
+/* AFTER LOGIN */
 
 /* Drop zone area overlaying the image */
 
