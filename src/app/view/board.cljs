@@ -13,7 +13,7 @@
     [app.view.invoice :as invoice-view]
     [app.view.identity
      :refer [identity-card]]
-    [app.view.pane :as pane
+    [app.view.entry :as entry
      :refer [profile-card]]))
 
 (def debug (rf/subscribe [:debug]))
@@ -46,7 +46,7 @@
        ^{:key id}
        [:> mui/ListItem
         {:selected (boolean selected)}
-        [pane/profile-panel {:item item}]])))
+        [entry/profile-panel {:item item}]])))
 
 (defn mui-styles [f]
   (styles/makeStyles (fn [theme] (clj->js (f theme)))))
@@ -75,10 +75,10 @@
            [:> Grid {:item true :xs 12 :sm 6 :md 4}
              #_{:selected (boolean selected)}
              [error-boundary {}
-              [pane/pick-zone {:item item
-                               :style {:width "100%"
-                                       :height "100%"}}
-               [pane/profile-card {:item item}]]]]))])
+              [entry/pick-zone {:item item
+                                :style {:width "100%"
+                                        :height "100%"}}
+               [entry/profile-card {:item item}]]]]))])
 
 (def requesting-funds (rf/subscribe [:requesting-funds]))
 
