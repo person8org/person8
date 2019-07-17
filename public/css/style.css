@@ -51,6 +51,11 @@ body {
   border-radius: 5px;
 }
 
+.board-grid-item {
+  max-height: 45vh;
+  max-height: calc(50vh  - 46px);
+}
+
 /* Drop zone area overlaying the image */
 
 .dropzone-area {
