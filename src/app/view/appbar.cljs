@@ -115,9 +115,10 @@
   [:div {:style {:flex-grow 1}}
    [:> mui/AppBar {:position "static"}
     [:> mui/Toolbar {}
-     [:> mui/Icon
-      {:style {:margin-right "1em"}}
-      [:> AppIcon {:color "inherit"}]]
+     (comment
+      [:> mui/Icon
+       {:style {:margin-right "1em"}}
+       [:> AppIcon {:color "inherit"}]])
      [:> mui/Typography {:variant "h6"
                          :style {:flex 1}}
       (get @product :name "App")]
