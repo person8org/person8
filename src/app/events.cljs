@@ -192,11 +192,18 @@
  (fn [{:as fx} [_ {:as item}]]
    {:dispatch [:sign-user-out]}))
 
+(defn redirect-entry [& [path]]
+  ;; ## FIX: Use reitit.frontend.easy/href or other library
+  (str
+   (.. js/window -location -origin)
+   "/" path
+   (.. js/window -location -search)))
+
 (rf/reg-event-fx
  :app/signin
  [(log-event)]
  (fn [{:as fx} [_ {:as item}]]
-   {:dispatch [:sign-user-in]}))
+   {:dispatch [:sign-user-in {:redirect-uri (redirect-entry "enter")}]}))
 
 (rf/reg-event-fx
  :app/reset!

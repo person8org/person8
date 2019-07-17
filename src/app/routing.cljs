@@ -10,16 +10,29 @@
    [mount.core :refer [defstate]]))
 
 (def routes
-    [["/signin" {:name :app/signin}]
-     ["/exit" {:name :app/exit}]
-     ["/enter" {:name :app/enter}]
-     ["/reset" {:name :app/reset!}]
-     ["/demo" {:name :app/demo}]])
+    [["/" {:name :home}]
+     ["/signin" {:name :signin
+                 :dispatch :app/signin}]
+     ["/exit" {:name :exit
+               :dispatch :app/exit}]
+     ["/enter" {:name :enter
+                :dispatch :app/enter
+                :replace-state [:home]}]
+     ["/reset" {:name :reset
+                :dispatch :app/reset!}]
+     ["/demo" {:name :demo
+               :dispatch :app/demo}]])
 
 (rf/reg-fx
  ::navigate!
  (fn [k params query]
    (easy/push-state k params query)))
+
+(rf/reg-fx
+ ::replace-state
+ (fn [[k & [params query]]]
+   (when k
+     (easy/replace-state k params query))))
 
 (rf/reg-event-fx
  ::navigate
@@ -27,9 +40,12 @@
    (timbre/debug "Navigate:" match)
    (when match
      (let [name (get-in match [:data :name])
+           dispatch (get-in match [:data :dispatch])
+           replace-state (get-in match [:data :replace-state])
            params (get-in match [:path-params])
            query (get-in match [:query-params])]
-       {:dispatch [name {:params params :query query}]}))))
+       {::replace-state replace-state
+        :dispatch [dispatch {:params params :query query}]}))))
 
 (defn enable-routing []
   (easy/start!
