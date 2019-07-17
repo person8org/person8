@@ -74,7 +74,8 @@
 
 (defn card-image-slot [{:keys [item image show-dropzone]}]
   (timbre/debug "Card image slot:" show-dropzone)
-  [:div {:style {:position "relative"
+  [:div.card-image-slot 
+        {:style {:position "relative"
                  :overflow "hidden"}}
    [ui/card-media {:style {:height "auto"}
                    :image image
@@ -98,7 +99,8 @@
       (timbre/debug "For larger display")
       [ui/card {:style {:width "100%"
                         :height "100%"
-                        :max-height "50vh"}}
+                        :max-height "50vh"
+                        :position "relative"}}
          [ui/card-header
           {:title (reagent/as-element
                    [:span label
@@ -120,21 +122,20 @@
               :show-dropzone (contains? #{:start :enter} @drag-status)
               :image image}])]
          (if image
-           [ui/card-actions
+           [ui/card-actions {:style {:min-height "2em"
+                                     :width "100%"
+                                     :position "absolute"
+                                     :background-color "inherit"
+                                     :bottom 0}}
             (if (and share true)
-              [:div {:style {;:display "flex"
-                             ;:justify-content "flex-end"
-                             ;:width "100%"
-                             :padding 0}}
+              [:div {:style {:padding 0}}
                [share-option
                 {:id id
                  :content content
                  :label label
                  :feedback feedback}]
                #_[notice feedback #(reset! feedback nil)]])
-            (if edit
-              [:span {:style {:width "1em"}}
-               [edit-button]])
+            #_
             (if (and events @expanded)
               [events-list {:events events}])])])))
 

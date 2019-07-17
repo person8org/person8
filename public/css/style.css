@@ -55,6 +55,10 @@ body {
 
 /* AFTER LOGIN */
 
+.card-image-slot {
+  border-radius: 5px;
+}
+
 /* Drop zone area overlaying the image */
 
 .dropzone-area {
