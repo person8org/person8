@@ -1,5 +1,5 @@
 # Person8
-## A Lifeline for the Digital Nomad
+## A Lifeline for digital nomads and others at risk of loosing their identity...
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/0ee6baf5-bfde-4f7a-ac0d-d4856b61677e/deploy-status)](https://app.netlify.com/sites/person8/deploys)
 
