@@ -45,7 +45,8 @@
                          :aria-haspopup true
                          :color "inherit"
                          :on-click open-menu}
-          [:> AccountCircle] " "
+          [:> AccountCircle]
+          [:span {:style {:width "0.4em"}}]
           [short-username-field {:user-name @user-name}]]
          [:> mui/Menu
           {:id "menu-appbar"
@@ -115,15 +116,26 @@
   [:div {:style {:flex-grow 1}}
    [:> mui/AppBar {:position "static"}
     [:> mui/Toolbar {}
-     (comment
+     [:> mui/Tooltip
+      {:title "Person8 logo"}
       [:> mui/Icon
-       {:style {:margin-right "1em"}}
-       [:> AppIcon {:color "inherit"}]])
+       {:style {:margin-right "1em"
+                :text-align  "center"
+                :line-height "16px"
+                :height "36px"
+                :width "36px"
+                :padding 0}}
+       [:img {:src "/media/logo/logo-outline-light.svg"
+              :style {:height "100%" :width "100%"}
+              :width "36" :height "36"}]
+       #_
+       [:> AppIcon {:color "inherit"}]]]
      [:> mui/Typography {:variant "h6"
                          :style {:flex 1}}
+      #_
       (get @product :name "App")]
      [upload-button {:active (not (empty? @selected))
-                     :hidden (not @signed-in-status)}]
+                      :hidden (not @signed-in-status)}]
      [lightning-button {:active (not @requesting-funds)
-                        :hidden (not @signed-in-status)}]
+                         :hidden (not @signed-in-status)}]
      [user-status-area {:signed-in-status @signed-in-status}]]]])
