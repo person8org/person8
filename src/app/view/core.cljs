@@ -19,7 +19,7 @@
 (defn header-theme []
   (createMuiTheme
    (clj->js
-    {:palette {:type "dark"
+    {:palette {:type (if @(rf/subscribe [:theme]) "light" "dark")
                :primary colors/blueGrey
                :primary-text-color colors/white}
      :typography {:useNextVariants true}})))
@@ -27,7 +27,7 @@
 (defn custom-theme []
   (createMuiTheme
    (clj->js
-    {:palette {:type "dark"}
+    {:palette {:type (if @(rf/subscribe [:theme]) "light" "dark")}
                ; :primary-text-color colors/white}
                ; :background (aget colors/blueGrey "700")
      :typography {:useNextVariants true}})))

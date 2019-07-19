@@ -310,6 +310,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(rf/reg-event-db
+ :theme
+ (fn [db [_ light?]]
+   (assoc db :theme light?)))
+
+(rf/reg-sub
+ :theme
+ (fn [db [_]]
+   (get db :theme)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (def user-data-sub (rf/subscribe [:blockstack/user-data]))
 
 (defn on-user-data-change []

@@ -21,6 +21,16 @@
 (def signed-in-status (rf/subscribe [:signed-in-status]))
 (def product (rf/subscribe [:product]))
 
+(defn theme-switch []
+  [:> mui/Tooltip
+   {:title (if @(rf/subscribe [:theme])
+             "Use dark mode for less energy consumption"
+             "Dark mode to save energy")}
+   [:> mui/Switch
+    {:checked @(rf/subscribe [:theme])
+     :color "default"
+     :on-change #(rf/dispatch [:theme (.. % -target -checked)])}]])
+
 (defn short-username-field [{:keys [user-name]}]
   (if (string? user-name)
     (string/replace user-name ".id.blockstack" "")))
@@ -130,10 +140,12 @@
               :width "36" :height "36"}]
        #_
        [:> AppIcon {:color "inherit"}]]]
+     [theme-switch]
      [:> mui/Typography {:variant "h6"
                          :style {:flex 1}}
       #_
       (get @product :name "App")]
+
      [upload-button {:active (not (empty? @selected))
                       :hidden (not @signed-in-status)}]
      [lightning-button {:active (not @requesting-funds)
