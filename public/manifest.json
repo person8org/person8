@@ -3,13 +3,13 @@
   "name": "Person8",
   "icons": [
     {
-      "src": "/media/icon.png",
+      "src": "https://app.person8.org/media/icon.png",
       "sizes": "192x192",
       "type": "image/png"
     }
   ],
   "start_url": "./index.html",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#FFFFFF",
+  "background_color": "#4E6A78"
 }
