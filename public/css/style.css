@@ -21,7 +21,6 @@ body {
 .form-signin, .form-register {
 }
 
-
 .form-auth .btn-primary:not(:hover) {
   background-color: rgb(31,31,109);
 }
@@ -35,9 +34,9 @@ body {
 
 .form-register .btn {
   background-image: url(/media/icon/baseline-person_add-24px.svg);
-  background-position: 0.3em center;
+  background-position: left center;
   background-repeat: no-repeat;
-  background-size: auto 80%;
+  background-size: auto 100%;
   padding-left: 3em;
 }
 
@@ -66,7 +65,7 @@ body {
 
 .slidedeck {
   padding-top: 81%;
-  background-color: #444;
+  /*background-color: #444;*/
 }
 
 .slidedeck iframe {

@@ -64,7 +64,7 @@
   :end (reagent/dispose! authenticated-track))
 
 (defn page [{:keys [open]}]
-  [:div.page 
+  [:div.page
     {:style {:display (if-not open "none")
              :background-color (aget colors/blueGrey "700")}}
     (case (if @debug (or @pane :default) :default)
@@ -79,5 +79,5 @@
     [header]]
    [:> mui-ThemeProvider
     {:theme (custom-theme)}
-    [:> mui/CssBaseline ;; Use with care, sets css on body which may affect landing page
+    [:div  ;:> mui/CssBaseline ;; Use with care, sets css on body which may affect landing page
       [page {:open (boolean @signed-in-status)}]]]])
