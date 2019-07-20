@@ -4,7 +4,7 @@
    ["@material-ui/core" :as mui]
    ["@material-ui/core/styles/MuiThemeProvider" :default mui-ThemeProvider]
    ["@material-ui/core/styles"
-    :refer [createMuiTheme useTheme withTheme]]
+    :refer [createMuiTheme]]
    ["@material-ui/core/colors" :as colors]
    [re-frame.core :as rf]
    [reagent.core :as reagent]
