@@ -53,11 +53,11 @@
       (if (not signed-in-status)
         [:div
          [:> mui/Button  {:color "inherit"
+                          :disabled (not (false? signed-in-status))
                           :on-click signin}
           [:> AccountCircle]
           [:span {:style {:width "0.4em"}}]
-          (if (some? signed-in-status)
-            "Sign In")]]
+          "Sign In"]]
         [:div
          [:> mui/Button {:aria-owns "menu-appbar"
                          :aria-haspopup true
