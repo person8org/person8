@@ -4,7 +4,7 @@
    ["@material-ui/core" :as mui]
    ["@material-ui/core/styles/MuiThemeProvider" :default mui-ThemeProvider]
    ["@material-ui/core/styles"
-    :refer [createMuiTheme]]
+    :refer [createMuiTheme useTheme withTheme]]
    ["@material-ui/core/colors" :as colors]
    [re-frame.core :as rf]
    [reagent.core :as reagent]
@@ -19,15 +19,16 @@
 (defn header-theme []
   (createMuiTheme
    (clj->js
-    {:palette {:type (if @(rf/subscribe [:theme]) "light" "dark")
+    {:palette {:type (or @(rf/subscribe [:theme]) "dark")
                :primary colors/blueGrey
-               :primary-text-color colors/white}
+               :primary-text-color colors/white
+               :background colors/red}
      :typography {:useNextVariants true}})))
 
 (defn custom-theme []
   (createMuiTheme
    (clj->js
-    {:palette {:type (if @(rf/subscribe [:theme]) "light" "dark")}
+    {:palette {:type (or @(rf/subscribe [:theme]) "dark")}
                ; :primary-text-color colors/white}
                ; :background (aget colors/blueGrey "700")
      :typography {:useNextVariants true}})))
@@ -65,12 +66,12 @@
 
 (defn page [{:keys [open]}]
   [:div.page
-    {:style {:display (if-not open "none")
-             :background-color (aget colors/blueGrey "700")}}
-    (case (if @debug (or @pane :default) :default)
-      :profile [dev/user-profile-card {:user-data user-data}]
-      :state [dev/state-inspector]
-      :default [board-pane (or @board-items)])])
+   {:style {:display (if-not open "none")
+            :background-color (aget colors/blueGrey "700")}}
+   (case (if @debug (or @pane :default) :default)
+     :profile [dev/user-profile-card {:user-data user-data}]
+     :state [dev/state-inspector]
+     :default [board-pane (or @board-items)])])
 
 (defn app []
   [:<>
@@ -80,4 +81,4 @@
    [:> mui-ThemeProvider
     {:theme (custom-theme)}
     [:div  ;:> mui/CssBaseline ;; Use with care, sets css on body which may affect landing page
-      [page {:open (boolean @signed-in-status)}]]]])
+     [page {:open (boolean @signed-in-status)}]]]])

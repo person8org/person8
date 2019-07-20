@@ -8,8 +8,7 @@
    ["@material-ui/icons/OfflineBolt" :default LightningIcon]
    ["@material-ui/icons/AccountCircle" :default AccountCircle]
    ["@material-ui/icons/CloudUpload" :default UploadIcon]
-   ["@material-ui/core/styles"
-    :refer [makeStyles]]
+   ["@material-ui/icons/SaveAlt" :default SaveAlt]
    [re-frame.core :as rf]
    [reagent.core :as reagent]
    [app.lib.drop
@@ -21,19 +20,27 @@
 (def signed-in-status (rf/subscribe [:signed-in-status]))
 (def product (rf/subscribe [:product]))
 
-(defn theme-switch []
-  [:> mui/Tooltip
-   {:title (if @(rf/subscribe [:theme])
-             "Use dark mode for less energy consumption"
-             "Dark mode to save energy")}
-   [:> mui/Switch
-    {:checked @(rf/subscribe [:theme])
-     :color "default"
-     :on-change #(rf/dispatch [:theme (.. % -target -checked)])}]])
+(defn theme-switch [props]
+  [:div props
+   [:> mui/Tooltip
+    {:title (if (= "light" @(rf/subscribe [:theme]))
+              "Use dark mode for less energy consumption"
+              "Dark mode to save energy")}
+    [:> mui/Switch
+     {:checked (= "light" @(rf/subscribe [:theme]))
+      :color "default"
+      :on-change #(rf/dispatch [:theme (if (.. % -target -checked) "light" "dark")])}]]])
 
 (defn short-username-field [{:keys [user-name]}]
   (if (string? user-name)
     (string/replace user-name ".id.blockstack" "")))
+
+(defn logout-icon []
+  [:> mui/Icon
+    {:style {:height "100%"
+             :transform "rotate(90deg)"
+             :margin-right "0.2em"}}
+    [:> SaveAlt]])
 
 (defn user-status-area [{:keys [signed-in-status]}]
   (let [state (reagent/atom {})
@@ -48,6 +55,7 @@
          [:> mui/Button  {:color "inherit"
                           :on-click signin}
           [:> AccountCircle]
+          [:span {:style {:width "0.4em"}}]
           (if (some? signed-in-status)
             "Sign In")]]
         [:div
@@ -63,10 +71,12 @@
            :anchorEl (:anchor @state)
            :open (boolean (:anchor @state))
            :on-close close-menu}
-          (for [{:keys [action label] :as item}
-                [{:label "Sign Out" :action signout}
-                 {:label "-"}
-                 {:label "Request Funds" :action request-funds}
+          (for [{:keys [action label icon] :as item}
+                [{:label "Sign Out"
+                  :icon [logout-icon]
+                  :action signout}
+                 #_{:label "-"}
+                 #_{:label "Request Funds" :action request-funds}
                  (if @debug {:label "Inbox" :action  #(rf/dispatch [:pane nil])})
                  (if @debug {:label "Profile" :action #(rf/dispatch [:pane :profile])})
                  (if @debug {:label "State" :action  #(rf/dispatch [:pane :state])})]
@@ -76,6 +86,7 @@
              {:on-click #(do
                            (if action (action))
                            (close-menu))}
+             icon
              label])]]))))
 
 (def requesting-funds (rf/subscribe [:requesting-funds]))
@@ -140,7 +151,7 @@
               :width "36" :height "36"}]
        #_
        [:> AppIcon {:color "inherit"}]]]
-     [theme-switch]
+     [theme-switch {:hidden (not @signed-in-status)}]
      [:> mui/Typography {:variant "h6"
                          :style {:flex 1}}
       #_

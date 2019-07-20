@@ -1,10 +1,17 @@
 body {
-  background-color: gray;
   min-height: 100vh;
 }
 
 .inspect {
   border: solid thin red;
+}
+
+.inspect .inspect {
+  border: solid thin blue;
+}
+
+.inspect .inspect .inspect {
+  border: solid thin yellow;
 }
 
 #app {
