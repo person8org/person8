@@ -15,7 +15,8 @@ body {
 }
 
 #app {
-  min-height: 56px;
+  /* min-height: 56px;*/
+  height: 0;
 }
 
 .form-auth {
@@ -26,25 +27,30 @@ body {
 }
 
 .form-signin, .form-register {
+  min-height: 100%;
 }
 
 .form-auth .btn-primary:not(:hover) {
   background-color: rgb(31,31,109);
 }
 
+.form-signin .btn, .form-register .btn {
+  height: 100%;
+}
+
 .form-signin .btn {
   background-image: url(https://pbs.twimg.com/profile_images/1099073690065547265/0T4PyCGk_400x400.png);
   background-repeat: no-repeat;
   background-size: auto 100%;
-  padding-left: 3em;
+  padding-left: 4em;
 }
 
 .form-register .btn {
   background-image: url(/media/icon/baseline-person_add-24px.svg);
-  background-position: left center;
+  background-position: 0.5em center;
   background-repeat: no-repeat;
-  background-size: auto 100%;
-  padding-left: 3em;
+  background-size: auto 80%;
+  padding-left: 3.5em;
 }
 
 .ph-button {
@@ -79,6 +85,118 @@ body {
   /*width: 500px;
   height: 405px;*/
 }
+
+/* Fire Effect */
+
+.fire {
+        		  animation: burn 1.5s linear infinite alternate;
+		  -webkit-animation: burn 1.5s linear infinite alternate;
+		  	 -moz-animation: burn 1.5s linear infinite alternate;
+		  	  -ms-animation: burn 1.5s linear infinite alternate;
+	  }
+
+.fire {
+  background-opacity: 0.5;
+}
+
+.fire1 {
+  animation-delay: 0s;
+}
+
+.fire2 {
+  animation-delay: -.2s;
+  -webkit-animation-delay: .2s;
+  -moz-animation-delay: .2s;
+  -ms-animation-delay: .2s;
+}
+
+.fire3 {
+  animation-delay: -.4s;
+  -webkit-animation-delay: .4s;
+  -moz-animation-delay: .4s;
+  -ms-animation-delay: .4s;
+}
+
+.fire4 {
+  animation-delay: -.6s; -webkit-animation-delay: .6s; -moz-animation-delay: .6s; -ms-animation-delay: .6s;
+}
+
+.fire5 {
+  animation-delay: -1s; -webkit-animation-delay: 1s; -moz-animation-delay: 1s; -ms-animation-delay: 1s;
+}
+
+@keyframes burn {
+			from { text-shadow: -.1em 0 .3em #fefcc9, .1em -.1em .3em #feec85, -.2em -.2em .4em #ffae34, .2em -.3em .3em #ec760c, -.2em -.4em .4em #cd4606, .1em -.5em .7em #973716, .1em -.7em .7em #451b0e; }
+			45%  { text-shadow: .1em -.2em .5em #fefcc9, .15em 0 .4em #feec85, -.1em -.25em .5em #ffae34, .15em -.45em .5em #ec760c, -.1em -.5em .6em #cd4606, 0 -.8em .6em #973716, .2em -1em .8em #451b0e; }
+			70%  { text-shadow: -.1em 0 .3em #fefcc9, .1em -.1em .3em #feec85, -.2em -.2em .6em #ffae34, .2em -.3em .4em #ec760c, -.2em -.4em .7em #cd4606, .1em -.5em .7em #973716, .1em -.7em .9em #451b0e; }
+			to   { text-shadow: -.1em -.2em .6em #fefcc9, -.15em 0 .6em #feec85, .1em -.25em .6em #ffae34, -.15em -.45em .5em #ec760c, .1em -.5em .6em #cd4606, 0 -.8em .6em #973716, -.2em -1em .8em #451b0e; }
+	  }
+
+@-webkit-keyframes burn {
+			from { text-shadow: -.1em 0 .3em #fefcc9, .1em -.1em .3em #feec85, -.2em -.2em .4em #ffae34, .2em -.3em .3em #ec760c, -.2em -.4em .4em #cd4606, .1em -.5em .7em #973716, .1em -.7em .7em #451b0e; }
+			45%  { text-shadow: .1em -.2em .5em #fefcc9, .15em 0 .4em #feec85, -.1em -.25em .5em #ffae34, .15em -.45em .5em #ec760c, -.1em -.5em .6em #cd4606, 0 -.8em .6em #973716, .2em -1em .8em #451b0e; }
+			70%  { text-shadow: -.1em 0 .3em #fefcc9, .1em -.1em .3em #feec85, -.2em -.2em .6em #ffae34, .2em -.3em .4em #ec760c, -.2em -.4em .7em #cd4606, .1em -.5em .7em #973716, .1em -.7em .9em #451b0e; }
+			to   { text-shadow: -.1em -.2em .6em #fefcc9, -.15em 0 .6em #feec85, .1em -.25em .6em #ffae34, -.15em -.45em .5em #ec760c, .1em -.5em .6em #cd4606, 0 -.8em .6em #973716, -.2em -1em .8em #451b0e; }
+	  }
+
+@-moz-keyframes burn {
+			from { text-shadow: -.1em 0 .3em #fefcc9, .1em -.1em .3em #feec85, -.2em -.2em .4em #ffae34, .2em -.3em .3em #ec760c, -.2em -.4em .4em #cd4606, .1em -.5em .7em #973716, .1em -.7em .7em #451b0e; }
+			45%  { text-shadow: .1em -.2em .5em #fefcc9, .15em 0 .4em #feec85, -.1em -.25em .5em #ffae34, .15em -.45em .5em #ec760c, -.1em -.5em .6em #cd4606, 0 -.8em .6em #973716, .2em -1em .8em #451b0e; }
+			70%  { text-shadow: -.1em 0 .3em #fefcc9, .1em -.1em .3em #feec85, -.2em -.2em .6em #ffae34, .2em -.3em .4em #ec760c, -.2em -.4em .7em #cd4606, .1em -.5em .7em #973716, .1em -.7em .9em #451b0e; }
+			to   { text-shadow: -.1em -.2em .6em #fefcc9, -.15em 0 .6em #feec85, .1em -.25em .6em #ffae34, -.15em -.45em .5em #ec760c, .1em -.5em .6em #cd4606, 0 -.8em .6em #973716, -.2em -1em .8em #451b0e; }
+	  }
+
+@-ms-keyframes burn {
+			from { text-shadow: -.1em 0 .3em #fefcc9, .1em -.1em .3em #feec85, -.2em -.2em .4em #ffae34, .2em -.3em .3em #ec760c, -.2em -.4em .4em #cd4606, .1em -.5em .7em #973716, .1em -.7em .7em #451b0e; }
+			45%  { text-shadow: .1em -.2em .5em #fefcc9, .15em 0 .4em #feec85, -.1em -.25em .5em #ffae34, .15em -.45em .5em #ec760c, -.1em -.5em .6em #cd4606, 0 -.8em .6em #973716, .2em -1em .8em #451b0e; }
+			70%  { text-shadow: -.1em 0 .3em #fefcc9, .1em -.1em .3em #feec85, -.2em -.2em .6em #ffae34, .2em -.3em .4em #ec760c, -.2em -.4em .7em #cd4606, .1em -.5em .7em #973716, .1em -.7em .9em #451b0e; }
+			to   { text-shadow: -.1em -.2em .6em #fefcc9, -.15em 0 .6em #feec85, .1em -.25em .6em #ffae34, -.15em -.45em .5em #ec760c, .1em -.5em .6em #cd4606, 0 -.8em .6em #973716, -.2em -1em .8em #451b0e; }
+	  }
+
+/* FEATURES */
+
+.features-icons {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.features-icons .features-icons-item {
+  max-width: 20rem;
+}
+
+.features-icons .features-icons-item .features-icons-icon {
+  height: 7rem;
+}
+
+.features-icons .features-icons-item .features-icons-icon i {
+  font-size: 4.5rem;
+}
+
+.features-icons .features-icons-item:hover .features-icons-icon i {
+  font-size: 5rem;
+}
+
+/* Call to Action */
+
+.call-to-action {
+  position: relative;
+  background-color: #343a40;
+  /*background: url("../img/bg-masthead.jpg") no-repeat center center;*/
+  background-size: cover;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.call-to-action .overlay {
+  position: absolute;
+  background-color: #212529;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0.3;
+}
+
 
 
 /* Initial Loading */
