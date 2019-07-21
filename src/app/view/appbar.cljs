@@ -61,6 +61,7 @@
         [:div
          [:> mui/Button {:aria-owns "menu-appbar"
                          :aria-haspopup true
+                         :disabled (not (true? signed-in-status))
                          :color "inherit"
                          :on-click open-menu}
           [:> AccountCircle]
@@ -159,6 +160,7 @@
 
      [upload-button {:active (not (empty? @selected))
                       :hidden (not @signed-in-status)}]
+     #_
      [lightning-button {:active (not @requesting-funds)
-                         :hidden (not @signed-in-status)}]
+                        :hidden (not @signed-in-status)}]
      [user-status-area {:signed-in-status @signed-in-status}]]]])
