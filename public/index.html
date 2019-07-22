@@ -73,19 +73,31 @@
 
       <nav class="navbar navbar-light bg-light static-top">
         <div class="container">
-          <a class="navbar-brand" href="#">
-            <h3>
+          <a class="navbar-brand" href="#"
+            data-toggle="tooltip" title="Person8 product branding">
+            <h4>
             <img class="align-text-bottom"
                  src="media/logo/logo.svg"
-                 style="height: 1.5em; margin-right: 1.5em;">
-            Person<small>8</small>
-          </h3>
+                 style="">
+            <small>P</small>erson<small>8</small>
+          </h4>
           </a>
           <div>
+
+            <a class="btn btn-outline-primary ml-0 py-0 px-2"
+              style="border:none; font-size: 1.5rem;"
+              role="button"
+              data-toggle="tooltip" title="Person8 on twitter"
+              target="_blank"
+              href="https://twitter.com/person8org">
+              <i class="fab fa-twitter"></i>
+            </a>
 
             <a class="btn btn-outline-primary ml-0 py-0 px-2 button-product-hunt"
               style="border:none; font-size: 1.5rem;"
               role="button"
+              data-toggle="tooltip" title="Person8 on Product Hunt"
+              target="_blank"
               href="https://www.producthunt.com/posts/person8">
               <i class="fab fa-product-hunt"></i>
             </a>
@@ -93,6 +105,8 @@
             <a class="btn btn-outline-primary ml-1 py-0 px-2"
               style="border:none; font-size: 1.5rem;"
               role="button"
+              data-toggle="tooltip" title="Person8 on Github"
+              target="_blank"
               href="https://github.com/person8org">
               <i class="fab fa-github"></i>
             </a>
@@ -100,6 +114,7 @@
             <a
              class="btn btn-outline-primary ml-5"
              role="button"
+             data-toggle="tooltip" title="Sign in to the Person8 app with Blockstack"
              href="/signin">
               <i class="fas fa-sign-in-alt"></i>&nbsp;
                Sign in

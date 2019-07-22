@@ -19,6 +19,17 @@ body {
   height: 0;
 }
 
+/* Navbar (Landing) */
+
+.navbar-brand {
+  font-variant: small-caps;
+}
+
+.navbar-brand img {
+  height: 1.5em;
+  margin-right: 0.75em;
+}
+
 /*
 .button-product-hunt:hover {
   background-color: rgb(218, 85, 47);
