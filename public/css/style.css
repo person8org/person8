@@ -19,6 +19,11 @@ body {
   height: 0;
 }
 
+/*
+.button-product-hunt:hover {
+  background-color: rgb(218, 85, 47);
+}*/
+
 .form-auth {
 }
 
@@ -100,11 +105,12 @@ body {
 /* Fire Effect */
 
 .fire {
-        		  animation: burn 1.5s linear infinite alternate;
-		  -webkit-animation: burn 1.5s linear infinite alternate;
-		  	 -moz-animation: burn 1.5s linear infinite alternate;
-		  	  -ms-animation: burn 1.5s linear infinite alternate;
+        		  animation: burn 1.3s linear infinite alternate;
+		  -webkit-animation: burn 1.3s linear infinite alternate;
+		  	 -moz-animation: burn 1.3s linear infinite alternate;
+		  	  -ms-animation: burn 1.3s linear infinite alternate;
 	  }
+
 
 .fire {
   background-opacity: 0.5;
@@ -115,25 +121,25 @@ body {
 }
 
 .fire2 {
-  animation-delay: -.2s;
-  -webkit-animation-delay: -.2s;
-  -moz-animation-delay: -.2s;
-  -ms-animation-delay: -.2s;
+  animation-delay: -.17s;
+  -webkit-animation-delay: -.17s;
+  -moz-animation-delay: -.17s;
+  -ms-animation-delay: -.17s;
 }
 
 .fire3 {
-  animation-delay: -.4s;
-  -webkit-animation-delay: -.4s;
-  -moz-animation-delay: -.4s;
-  -ms-animation-delay: -.4s;
+  animation-delay: -.27s;
+  -webkit-animation-delay: -.27s;
+  -moz-animation-delay: -.27s;
+  -ms-animation-delay: -.27s;
 }
 
 .fire4 {
-  animation-delay: -.6s; -webkit-animation-delay: -.6s; -moz-animation-delay: -.6s; -ms-animation-delay: -.6s;
+  animation-delay: -.59s; -webkit-animation-delay: -.59s; -moz-animation-delay: -.59s; -ms-animation-delay: -.59s;
 }
 
 .fire5 {
-  animation-delay: -1s; -webkit-animation-delay: -1s; -moz-animation-delay: -1s; -ms-animation-delay: -1s;
+  animation-delay: -0.97s; -webkit-animation-delay: -0.97; -moz-animation-delay: -0.97s; -ms-animation-delay: -0.97s;
 }
 
 @keyframes burn {
@@ -181,10 +187,11 @@ body {
 
 .features-icons .features-icons-item .features-icons-icon i {
   font-size: 4.5rem;
+  transition: font-size 0.2s ease-in-out;
 }
 
 .features-icons .features-icons-item:hover .features-icons-icon i {
-  font-size: 5rem;
+  font-size: 5.5rem;
 }
 
 /* Call to Action */
