@@ -45,7 +45,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
           integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 -->
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css"
+          rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/flatly/bootstrap.min.css">
@@ -77,19 +78,32 @@
             <img class="align-text-bottom"
                  src="media/logo/logo.svg"
                  height="32px">
-            Person8
+            Person<small>8</small>
           </h4>
           </a>
           <div>
-              <a class="btn-primary ph-button"
-                 href="https://www.producthunt.com/posts/person8?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-person8"
-                 target="_blank">
-                <img
-                 class="mb-2"
-                 src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=161352&theme=dark"
-                 alt="Person8 - A toolkit to restore identity for digital nomads | Product Hunt Embed"
-                 style="width: 250px; height: 54px;" width="250px" height="54px" />
-               </a>
+            <a
+             class="btn btn-outline-primary mb-2"
+             role="button"
+             href="/signin">
+              <i class="fas fa-sign-in-alt"></i>&nbsp;
+               Sign in
+            </a>
+
+            <a class="btn btn-outline-primary ml-5 py-0 px-2"
+              style="border:none; font-size: 1.5rem;"
+              role="button"
+              href="https://www.producthunt.com/posts/person8">
+              <i class="fab fa-product-hunt"></i>
+            </a>
+
+            <a class="btn btn-outline-primary ml-5 py-0 px-2"
+              style="border:none; font-size: 1.5rem;"
+              role="button"
+              href="https://github.com/person8org">
+              <i class="fab fa-github"></i>
+            </a>
+
           </div>
         </div>
       </nav>
@@ -145,7 +159,7 @@
             <div class="col-lg-4">
               <div class="features-icons-item mx-auto mb-0 mb-lg-3">
                 <div class="features-icons-icon d-flex">
-                  <i class="fa fa-shield m-auto text-primary"></i>
+                  <i class="fa fa-shield-alt m-auto text-primary"></i>
                 </div>
                 <h3>Secure Vault</h3>
                 <p class="lead mb-0">All documents are strongly encrypted for your protection.</p>
@@ -164,7 +178,6 @@
           </div>
         </div>
       </section>
-
 
      <section class="call-to-action text-white text-center">
         <div class="form-auth d-flex flex-row flex-wrap justify-content-center">
@@ -186,6 +199,32 @@
           </div>
         </div>
       </section>
+
+      <section class="recognition text-center bg-light">
+        <div class="d-flex flex-row flex-wrap justify-content-center">
+          <div class="col-6 col-md-5 col-lg-4">
+            <a class="btn btn-primary ph-button"
+               href="https://www.producthunt.com/posts/person8?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-person8"
+               target="_blank">
+              <img
+               class="img-responsive"
+               src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=161352&theme=light"
+               alt="Person8 - Lifeline for Digital Nomads and others risking Identity Loss | Product Hunt"
+               />
+               <!--  width="250px" height="54px" -->
+             </a>
+          </div>
+        </div>
+      </section>
+
+      <footer class="py-5 bg-dark">
+        <div class="container">
+          <p class="m-0 text-center text-white">
+            Made with <i class="far fa-heart" style="color: salmon"></i> <i class="fa blockstack-glyph">&nbsp;</i>
+            in San Francisco</p>
+        </div>
+        <!-- /.container -->
+      </footer>
 
      </div>
     </div>

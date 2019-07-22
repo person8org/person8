@@ -54,12 +54,11 @@ body {
 }
 
 .ph-button {
-  margin-left: 1em;
-  display: inline-block;
-  width: 250px;
-  height: 54px;
-  background-color: #0069d9;
+  margin-right: 1em;
+  background-color: transparent;
   border-radius: 11px;
+  padding: 0;
+  border: none;
 }
 
 .ph-button:hover {
@@ -67,18 +66,30 @@ body {
 }
 
 .ph-button img {
-  width: 250px;
-  height: 54px;
+  object-fit: contain;
+  max-height: 100%;
+  width: auto;
   transition: opacity 0.2s ease-in-out;
 }
 
 .ph-button img:hover {
-  opacity: 0.7;
+  opacity: 0.2;
 }
 
 .slidedeck {
   padding-top: 81%;
   /*background-color: #444;*/
+}
+
+.blockstack-glyph {
+  height: 0.9rem;
+  width: 0.9rem;
+  margin-right: 0.2rem;
+  background-image: url(https://pbs.twimg.com/profile_images/1099073690065547265/0T4PyCGk_400x400.png);
+  background-position: -0.35rem -0.35rem;
+  background-repeat: no-repeat;
+  background-size: 170% 170%;
+  border-radius: 0.2rem;
 }
 
 .slidedeck iframe {
@@ -196,6 +207,12 @@ body {
   left: 0;
   opacity: 0.3;
 }
+
+.recognition {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
 
 
 
