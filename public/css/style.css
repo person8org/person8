@@ -258,6 +258,7 @@ body {
   paddding-right: 0.5em;
   background-color: rgb(96, 125, 139);
   filter: blur(4px);
+  opacity: 0.7;
 }
 
 .preview-box {

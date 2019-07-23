@@ -72,12 +72,22 @@
     :on-change #(timbre/debug "Change in dropzone")
     :on-drop (on-drop-fn {:item item})}])
 
+(defn css-url [url]
+  (str "url(" url ")"))
+
 (defn card-image-slot [{:keys [item image show-dropzone]}]
-  (timbre/debug "Card image slot:" show-dropzone)
+  (timbre/debug "Card image slot:" item)
   [:div.card-image-slot
         {:style {:position "relative"
+                 :height "100%"
+                 :background-size "cover"
+                 :background-image (css-url (get-in item [:default :image]))
+                 :background-repeat "no-repeat"
                  :overflow "hidden"}}
-   [ui/card-media {:style {:height "auto"}
+   [ui/card-media {:style {:height "20rem"
+                           :width "100%"
+                           :opacity (if image 1 0)
+                           :transition "opacity 1s ease-in-out"}
                    :image image
                    :component "img"}]
    [:div {:class-name (if show-dropzone "show-dropzone")
@@ -115,13 +125,12 @@
                           [:> NoDocIcon])]
                        reagent/as-element)}]
          [ui/card-content
-          {:style {:width "100%" :height "auto"}}
-          (if image
-            [card-image-slot
+          {:style {:width "100%" :height "100%"}}
+          [card-image-slot
              {:item item
-              :show-dropzone (contains? #{:start :enter} @drag-status)
-              :image image}])]
-         (if image
+              :show-dropzone (contains? #{:start :enter} @drag-status) ;; ## Moot?
+              :image image}]]
+         (if true
            [ui/card-actions {:style {:min-height "2em"
                                      :width "100%"
                                      :position "absolute"
@@ -172,12 +181,11 @@
                        reagent/as-element)}]]
         [ui/expansion-panel-details
          [ui/card-content
-          {:style {:width "100%"}}
-          (if image
-            [card-image-slot
+          {:style {:width "100%" :height "100%"}}
+          [card-image-slot
              {:item item
               :show-dropzone (contains? #{:start :enter} @drag-status)
-              :image image}])]
+              :image image}]]
          (if image
            [ui/card-actions
             (if (and share true)
