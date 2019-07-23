@@ -22,7 +22,7 @@ body {
 /* Navbar (Landing) */
 
 .navbar-brand {
-  font-variant: small-caps;
+  text-transform: uppercase;
 }
 
 .navbar-brand img {
@@ -241,12 +241,33 @@ body {
   opacity: 0.5;
 }
 
-.reload {
+/* Reloading after authentification */
+
+.alert-preview {
   background-image: url(https://pbs.twimg.com/profile_images/1099073690065547265/0T4PyCGk_400x400.png);
   background-repeat: no-repeat;
   background-size: auto 100%;
   background-color: rgb(102, 75, 138);
 }
+
+.preview {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding-left: 0.5em;
+  paddding-right: 0.5em;
+  background-color: rgb(96, 125, 139);
+  filter: blur(4px);
+}
+
+.preview-box {
+  background-color: #555;
+  border: 0.5em solid rgb(96, 125, 139);
+  height: 45vh;
+  height: calc(50vh  - 46px);
+}
+
+
 
 /* AFTER LOGIN ===================== */
 
