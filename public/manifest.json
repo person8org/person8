@@ -3,7 +3,11 @@
   "name": "Person8",
   "icons": [
     {
-      "src": "https://app.person8.org/media/icon.png",
+      "src": "https://app.person8.org/media/logo/logo.svg",
+      "type": "image/svg"
+    },
+    {
+      "src": "https://app.person8.org/media/logo.png",
       "sizes": "192x192",
       "type": "image/png"
     }
