@@ -65,17 +65,29 @@
 
 (def requesting-funds (rf/subscribe [:requesting-funds]))
 
+(def open-dialog (rf/subscribe [:app/open-dialog]))
+
+(defn modal-dialog []
+  "Placeholder for modal dialogs"
+  (let [on-dialog-close #(rf/dispatch [:app/open-dialog nil])
+        [name & args] @open-dialog]
+    [:> mui/Dialog {:class-name "mui-modal-dialog"
+                    :open (some? name)
+                    :on-close on-dialog-close}
+     (case name ;; # use hide/show for faster response?
+       :invoice-view/funding-request-card
+       [invoice-view/funding-request-card]
+       :entry/expanded-view
+       (apply vector entry/expanded-view args)
+       nil)]))
+
 (defn board-pane [items]
-  (let [on-dialog-close #(rf/dispatch [:request-funds false])]
-    (fn [items]
-      [error-boundary {}
-       [:> mui/Dialog {:open (boolean @requesting-funds)
-                       :on-close on-dialog-close}
-        [invoice-view/funding-request-card]]
+  [error-boundary {}
+       [modal-dialog]
        [:> mui/Hidden {:sm-up true}
         [board-listing {:items items}]]
        [:> mui/Hidden {:xs-down true}
-        [board-grid {:items items}]]])))
+        [board-grid {:items items}]]])
 
 (defmethod pane :default [{:keys [mobile profile] :as session}]
   [board-pane (:fields @profile)])

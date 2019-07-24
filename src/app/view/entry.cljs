@@ -75,29 +75,36 @@
 (defn css-url [url]
   (str "url(" url ")"))
 
+(def card-image-slot-styles
+  {:root {:position "relative"
+          :height "100%"
+          :background-size "cover"
+          :background-repeat "no-repeat"
+          :overflow "hidden"}
+   :doc      {:height "20rem"
+              :width "100%"
+              :transition "opacity 1s ease-in-out"}
+   :dropzone {:position "absolute"
+              :top 0
+              :width "100%"
+              :height "100%"}})
+
 (defn card-image-slot [{:keys [item image show-dropzone]}]
   ; show-dropzone is moot
   (timbre/debug "Card image slot:" item)
-  [:div.card-image-slot
-        {:style {:position "relative"
-                 :height "100%"
-                 :background-size "cover"
-                 :background-image (css-url (get-in item [:default :image]))
-                 :background-repeat "no-repeat"
-                 :overflow "hidden"}}
-   [ui/card-media {:style {:height "20rem"
-                           :width "100%"
-                           :opacity (if image 1 0)
-                           :transition "opacity 1s ease-in-out"}
-                   :image image
-                   :component "img"}]
-   [:div {:class-name (if show-dropzone "show-dropzone")
-          :hidden image
-          :style {:position "absolute"
-                  :top 0
-                  :width "100%"
-                  :height "100%"}}
-      [drop-zone-area {:item item}]]])
+  (let [styles card-image-slot-styles]
+    [:div.card-image-slot
+     {:on-double-click #(rf/dispatch [:user/open-entry item])
+      :style (assoc (:root styles)
+                    :background-image (css-url (get-in item [:default :image])))}
+     [ui/card-media {:style (assoc (:doc styles)
+                                   :opacity (if image 1 0))
+                     :image image
+                     :component "img"}]
+     [:div {:class-name (if show-dropzone "show-dropzone")
+            :hidden image
+            :style (:dropzone styles)}
+      [drop-zone-area {:item item}]]]))
 
 (defn profile-card [{{:keys [id label description edit share
                              image expandable text events] :as item} :item
@@ -206,6 +213,15 @@
                [edit-button]])
             (if (and events @expanded)
               [events-list {:events events}])])]]])))
+
+(defn expanded-view [{:keys [image] :as entry}]
+  "Show expanded entry (typically for dialog)"
+  [:div ;.inspect
+   {:style {:background-image (css-url image)
+            :background-size "contain"
+            :width "100vw"
+            :height "100vh"
+            :object-fit "contain"}}])
 
 #_
 (defn view [{:keys [item] :as props}]

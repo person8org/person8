@@ -115,6 +115,24 @@
      (store/update-image user-session id image))
    nil))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; MODAL DIALOG
+
+(rf/reg-event-db
+ :app/open-dialog
+ [(log-event)]
+ (fn [{:as db}
+      [_ [:as args]]]
+   (assoc db :open-dialog args)))
+
+(rf/reg-sub
+ :app/open-dialog
+ (fn [{:as db} [_]]
+   (:open-dialog db)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; USER INTERACTIVITY
+
 (rf/reg-event-db
  :replace-image
  [(log-event)
@@ -176,6 +194,13 @@
  :drag
  (fn [db [_ query]]
    (get db :drag)))
+
+(rf/reg-event-fx
+ :user/open-entry
+ [(log-event)]
+ (fn [{{:keys [user-session] :as db} :db :as  fx}
+      [_ {:keys [id] :as entry}]]
+   {:dispatch [:app/open-dialog [:entry/expanded-view entry]]}))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; APP ROUTING EVENTS
