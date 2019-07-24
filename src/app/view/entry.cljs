@@ -76,6 +76,7 @@
   (str "url(" url ")"))
 
 (defn card-image-slot [{:keys [item image show-dropzone]}]
+  ; show-dropzone is moot
   (timbre/debug "Card image slot:" item)
   [:div.card-image-slot
         {:style {:position "relative"
@@ -91,6 +92,7 @@
                    :image image
                    :component "img"}]
    [:div {:class-name (if show-dropzone "show-dropzone")
+          :hidden image
           :style {:position "absolute"
                   :top 0
                   :width "100%"
@@ -128,7 +130,7 @@
           {:style {:width "100%" :height "100%"}}
           [card-image-slot
              {:item item
-              :show-dropzone (contains? #{:start :enter} @drag-status) ;; ## Moot?
+              ; :show-dropzone (contains? #{:start :enter} @drag-status) ;; ## Moot?
               :image image}]]
          (if true
            [ui/card-actions {:style {:min-height "2em"
