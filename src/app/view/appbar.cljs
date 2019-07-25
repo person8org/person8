@@ -6,6 +6,7 @@
    ["@material-ui/icons/Menu" :default AppIcon]
    ["@material-ui/icons/FlashOn" :default LightningIcon2]
    ["@material-ui/icons/OfflineBolt" :default LightningIcon]
+   ["@material-ui/icons/Info" :default InfoIcon]
    ["@material-ui/icons/AccountCircle" :default AccountCircle]
    ["@material-ui/icons/CloudUpload" :default UploadIcon]
    ["@material-ui/icons/SaveAlt" :default SaveAlt]
@@ -30,6 +31,15 @@
      {:checked (= "light" @(rf/subscribe [:theme]))
       :color "default"
       :on-change #(rf/dispatch [:theme (if (.. % -target -checked) "light" "dark")])}]]])
+
+(defn info-button [{:keys [hidden]}]
+  (let [show-info-action #(rf/dispatch [:app/open-dialog [:info/view]])]
+    (if-not hidden
+      [:> mui/Tooltip {:title "Show information about the app."}
+       [:> mui/Button {:color "inherit"
+                       :style {:color "lightskyblue"}
+                       :on-click show-info-action}
+        [:> InfoIcon]]])))
 
 (defn short-username-field [{:keys [user-name]}]
   (if (string? user-name)
@@ -157,7 +167,8 @@
                          :style {:flex 1}}
       #_
       (get @product :name "App")]
-
+     [info-button {:hidden (not @signed-in-status)}]
+     #_
      [upload-button {:active (not (empty? @selected))
                       :hidden (not @signed-in-status)}]
      #_

@@ -216,7 +216,7 @@
 
 (defn expanded-view [{:keys [image] :as entry}]
   "Show expanded entry (typically for dialog)"
-  [:div ;.inspect
+  [:div
    {:style {:background-image (css-url image)
             :background-size "contain"
             :width "100vw"

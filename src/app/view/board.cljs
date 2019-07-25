@@ -9,6 +9,7 @@
     [re-frame.core :as rf]
     [reagent.core :as reagent]
     [app.lib.styling :as styling]
+    [app.view.info :as info]
     [app.view.invoice :as invoice-view]
     [app.view.identity
      :refer [identity-card]]
@@ -79,6 +80,8 @@
        [invoice-view/funding-request-card]
        :entry/expanded-view
        (apply vector entry/expanded-view args)
+       :info/view
+       (apply vector info/view args)
        nil)]))
 
 (defn board-pane [items]
