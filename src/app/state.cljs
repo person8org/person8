@@ -33,4 +33,9 @@
     :default {:image "/media/birth-certificate.jpg"}
     :expandable true
     :edit false
+    :share true}
+   {:id "new item"
+    :label "Custom"
+    :description "You can add custom images"
+    :expandable true
     :share true}])
