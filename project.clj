@@ -5,7 +5,7 @@
   :dependencies [[org.clojure/clojure "1.10.0"]
                  ; [org.clojure/clojurescript "1.10.520"]
                  [org.clojure/core.async "0.4.490"]
-                 [thheller/shadow-cljs "2.8.40"]
+                 [thheller/shadow-cljs "2.8.52"]
                  ; [binaryage/devtools "0.9.10"]
                  [com.taoensso/timbre "4.10.0"]
                  [reagent]

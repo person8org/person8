@@ -7,11 +7,11 @@
 
 ### [Support us with a slice on Pietron!](https://pietron.app/new?name=Person8&address=3QZd2cvtAod5EJuCA1S726RTjnTTrTTp8U)
 
-## Setup And Run
+## Setup
 
-#### Install dependencies
 ```shell
 yarn install || npm install
+lein do clean, deps, compile
 ```
 
 #### Transpile JSX with Babel
