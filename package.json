@@ -20,8 +20,8 @@
     "clean-win": "rmdir /s /q public/js & rmdir /s /q target"
   },
   "dependencies": {
-    "@material-ui/core": "^4.0.0",
-    "@material-ui/icons": "^4.0.0",
+    "@material-ui/core": "^4.4.0",
+    "@material-ui/icons": "^4.2.1",
     "@types/bitcoinjs-lib": "^4.0.1",
     "blockstack": "19.2.5",
     "bolt11": "^1.2.5",
@@ -31,11 +31,11 @@
     "isarray": "^2.0.4",
     "lightning-charge-client": "0.1.10",
     "load-styles": "^2.0.0",
-    "material-ui-dropzone": "^2.4.0",
+    "material-ui-dropzone": "^2.4.1",
     "qrcode": "^1.4.0",
     "qrcode.react": "^0.9.3",
-    "react": "~16.8.1",
-    "react-dom": "~16.8.1",
+    "react": "~16.9.0",
+    "react-dom": "~16.9.0",
     "triplesec": "^3.0.26"
   },
   "devDependencies": {

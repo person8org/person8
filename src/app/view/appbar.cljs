@@ -146,7 +146,7 @@
 
 (defn header []
   [:div {:style {:flex-grow 1}}
-   [:> mui/AppBar {:position "static"}
+   [:> mui/AppBar {:position "sticky" :color "primary"}
     [:> mui/Toolbar {}
      [:> mui/Tooltip
       {:title "Person8 logo"}

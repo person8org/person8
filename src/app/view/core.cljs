@@ -16,21 +16,31 @@
    [app.view.board
     :refer [board-pane]]))
 
-(defn header-theme []
-  (createMuiTheme
-   (clj->js
-    {:palette {:type (or @(rf/subscribe [:theme]) "dark")
-               :primary colors/blueGrey
-               :primary-text-color colors/white
-               :background colors/red}
-     :typography {:useNextVariants true}})))
+#_
+{:light colors/blue
+ :main colors/blueGrey
+ :dark colors/red}
 
-(defn custom-theme []
+(timbre/info "HEADER:" (js-keys colors/blue))
+
+(defn header-theme [theme]
+  (timbre/debug "Header theme:" theme)
   (createMuiTheme
    (clj->js
-    {:palette {:type (or @(rf/subscribe [:theme]) "dark")}
-               ; :primary-text-color colors/white}
-               ; :background (aget colors/blueGrey "700")
+    {:overrides
+     (if (= theme "dark")
+       {:MuiAppBar
+         {:colorPrimary
+           {:backgroundColor (aget colors/blueGrey 600)}}})
+
+     :palette {:type (or theme "dark")}
+     :typography {:useNextVariants true}}))) ;(or theme "dark")
+
+
+(defn custom-theme [theme]
+  (createMuiTheme
+   (clj->js
+    {:palette {:type (or theme "dark")}
      :typography {:useNextVariants true}})))
 
 (def user-data (rf/subscribe [:blockstack/user-data]))
@@ -42,6 +52,8 @@
 (def signed-in-status (rf/subscribe [:signed-in-status]))
 
 (def debug (rf/subscribe [:debug]))
+
+(def theme (rf/subscribe [:theme]))
 
 (defn authenticated-hook [signed-in-status]
   "Affect what is shown after logging in and out"
@@ -64,10 +76,9 @@
   :start (reagent/track! on-authenticated-changes)
   :end (reagent/dispose! authenticated-track))
 
-(defn page [{:keys [open]}]
+(defn page []
   [:div.page
-   {:style {:display (if-not open "none")
-            :background-color (aget colors/blueGrey "700")}}
+   {:style {:background-color nil #_(aget colors/blueGrey "700")}}
    (case (if @debug (or @pane :default) :default)
      :profile [dev/user-profile-card {:user-data user-data}]
      :state [dev/state-inspector]
@@ -76,9 +87,11 @@
 (defn app []
   [:<>
    [:> mui-ThemeProvider
-    {:theme (header-theme)}
-    [header]]
-   [:> mui-ThemeProvider
-    {:theme (custom-theme)}
-    [:div  ;:> mui/CssBaseline ;; Use with care, sets css on body which may affect landing page
-     [page {:open (boolean @signed-in-status)}]]]])
+     {:theme (header-theme @theme)}
+     [:> mui/CssBaseline
+       [header]]]
+   [:div {:hidden (not @signed-in-status)}
+     [:> mui-ThemeProvider
+      {:theme (custom-theme @theme)}
+      [:> mui/CssBaseline
+       [page {:open (boolean @signed-in-status)}]]]]])
