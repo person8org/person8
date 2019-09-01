@@ -6,6 +6,8 @@
     ["@material-ui/core/Grid" :default Grid]
     ["@material-ui/core/Hidden" :default Hidden]
     ["react" :as react]
+    [app.lib.reagent-mui
+     :refer [error-boundary]]
     [re-frame.core :as rf]
     [reagent.core :as reagent]
     [app.lib.styling :as styling]
@@ -21,25 +23,7 @@
 (defmulti pane (fn [{:keys [stage] :as session}]
                   (if stage [@stage])))
 
-(defn error-boundary [{:as props} & children]
-  "Catch errors to limit the effect on rendering"
-  (let [error-status (reagent/atom nil)]
-    (reagent/create-class
-     {:get-derived-state-from-error
-      (fn [error]
-        #js{:hasError true})
-      :component-did-catch
-      (fn [error info]
-        (timbre/warn error info)
-        (reset! error-status error))
-      :reagent-render
-      (fn [& children]
-        (if-not @error-status
-          (into [:<>] children)
-          [:div.error-boundary]))})))
-
 (defn board-listing [{:keys [items]}]
-  (timbre/debug "Show as list")
   (into
     [:> mui/List]
     (for [{:keys [id selected] :as item} items]
@@ -48,21 +32,29 @@
         {:selected (boolean selected)}
         [entry/profile-panel {:item item}]])))
 
+(def board-grid-styles (styling/mui-styles
+                        (fn [theme]
+                           {:grid-bg {:padding (.spacing theme 1)
+                                      :margin (.spacing theme 4)}
+                            :board-grid-item {:max-height "calc(50vh  - 46px)"}})))
+
 (defn board-grid [{:keys [items]}]
-  (timbre/debug "Show as grid" #_(js-keys classes))
-  [styling/block {}
-         (into
-          [:> Grid {:container true :spacing 1}]
+  [styling/block {:mui-styles board-grid-styles
+                  :class-name ["grid-bg"]}
+   (fn [{:keys [board-grid-item] :as classes}]
+      (timbre/debug "CUSTOM:" classes)
+      (into
+          [:> Grid {:container true :spacing 6}]
           (for [{:keys [id selected] :as item} items]
             ^{:key id}
            [:> Grid {:item true :xs 12 :sm 6 :md 4
-                     :classes {:root "board-grid-item"}}
+                     :classes {:root board-grid-item}}
              #_{:selected (boolean selected)}
-             [error-boundary {}
+             [error-boundary {:report-error #(timbre/warn %1 %2)}
               [entry/pick-zone {:item item
                                 :style {:width "100%"
                                         :height "100%"}}
-               [entry/profile-card {:item item}]]]]))])
+               [entry/profile-card {:item item}]]]])))])
 
 (def requesting-funds (rf/subscribe [:requesting-funds]))
 

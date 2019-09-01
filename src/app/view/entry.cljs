@@ -19,6 +19,7 @@
        :refer [DropzoneArea]]
    [cljs-drag-n-drop.core :as dnd]
    [app.lib.reagent-mui :as ui]
+   [app.lib.styling :as styling]
    [goog.string :as gstring]
    [app.lib.drop
     :refer [decode-file]]
@@ -96,6 +97,9 @@
     [:div.card-image-slot
      {:on-double-click #(rf/dispatch [:user/open-entry item])
       :style (assoc (:root styles)
+                    :background-color "rgba(255, 255, 255, 0.8)"
+                    :background-blend-mode "lighten"
+                    :background-size "contain"
                     :background-image (css-url (get-in item [:default :image])))}
      [ui/card-media {:style (assoc (:doc styles)
                                    :opacity (if image 1 0))

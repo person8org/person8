@@ -5,9 +5,6 @@
    [re-frame.core :as rf]
    [reagent.core :as reagent]))
 
-
-
-
 (defn view []
   (timbre/info "Open info dialog")
   [:div

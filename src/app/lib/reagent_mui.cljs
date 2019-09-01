@@ -5,6 +5,24 @@
    ["@material-ui/core" :as mui]
    ["@material-ui/icons/FileCopy" :default CopyIcon]))
 
+(defn error-boundary [{:keys [report-error] :as props} & children]
+  "Catch errors to limit the effect on rendering"
+  (let [error-status (reagent/atom nil)]
+    (reagent/create-class
+     {:get-derived-state-from-error
+      (fn [error]
+        #js{:hasError true})
+      :component-did-catch
+      (fn [error info]
+        (when report-error
+          (report-error error info))
+        (reset! error-status error))
+      :reagent-render
+      (fn [props & children]
+        (if-not @error-status
+          (into [:<>] children)
+          [:div.error-boundary]))})))
+
 "Shim for reagent mui"
 
 (assert mui/Card)
