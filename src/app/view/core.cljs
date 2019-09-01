@@ -16,11 +16,6 @@
    [app.view.board
     :refer [board-pane]]))
 
-#_
-{:light colors/blue
- :main colors/blueGrey
- :dark colors/red}
-
 (timbre/info "HEADER:" (js-keys colors/blue))
 
 (defn header-theme [theme]
@@ -31,7 +26,7 @@
      (if (= theme "dark")
        {:MuiAppBar
          {:colorPrimary
-           {:backgroundColor (aget colors/blueGrey 600)}}})
+           {:backgroundColor (aget colors/blueGrey 800)}}})
 
      :palette {:type (or theme "dark")}
      :typography {:useNextVariants true}}))) ;(or theme "dark")

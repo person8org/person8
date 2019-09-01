@@ -364,7 +364,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def initial-db
-  {:product {:name "Person8"}
+  {:theme "light"
+   :product {:name "Person8"}
    :board state/profile-fields})
 
 (timbre/info "Initialize state")
