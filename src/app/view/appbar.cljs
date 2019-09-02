@@ -165,7 +165,6 @@
      [theme-switch {:hidden (not @signed-in-status)}]
      [:> mui/Typography {:variant "h6"
                          :style {:flex 1}}
-      #_
       (get @product :name "App")]
      [info-button {:hidden (not @signed-in-status)}]
      #_
