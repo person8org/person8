@@ -58,5 +58,6 @@
     ;; should perhaps be reported as issue to reitit?
     {:use-fragment false}))
 
+#_ ;; has to be after everything else
 (defstate routing-state
   :start (enable-routing))
