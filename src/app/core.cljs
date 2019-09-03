@@ -7,7 +7,8 @@
    [app.lib.blockstack
     :refer [init-blockstack]]
    [app.datatransfer]
-   [app.routing]
+   [app.routing
+    :refer [enable-routing]]
    [app.lib.drop]
    [app.events]
    [app.store]
@@ -25,7 +26,8 @@
   []
   (mount-root)
   (mount/start)
-  (init-blockstack))
+  (init-blockstack)
+  (enable-routing))
 
 (defn ^:export main
   []
