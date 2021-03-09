@@ -26,7 +26,7 @@
     "blockstack": "19.2.5",
     "bolt11": "^1.2.5",
     "buffer": "^5.2.1",
-    "elliptic": "6.5.0",
+    "elliptic": "6.5.4",
     "is-plain-object": "^3.0.0",
     "isarray": "^2.0.4",
     "lightning-charge-client": "0.1.10",
