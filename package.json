@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "lodash.merge": ">=4.6.2",
-    "lodash": ">=4.17.13",
+    "lodash": ">=4.17.21",
     "readable-stream": "~2.3.6",
     "shadow-cljs": "~2.8.52"
   },
